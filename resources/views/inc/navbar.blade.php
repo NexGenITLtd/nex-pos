@@ -8,6 +8,11 @@
     <li class="nav-item d-none d-sm-inline-block">
       <a href="/" class="nav-link">Home</a>
     </li>
+    <li class="nav-item">
+      <a class="nav-link" href="{{ route('invoices.create') }}">
+        <span class="badge badge-primary"><i class="fas fa-shopping-cart"></i> Sale</span>
+      </a>
+    </li>
     @php
     $menus = App\Models\Menu::with('children')->orderBy('order', 'asc')->get();
     @endphp
@@ -26,7 +31,7 @@
   </ul>
 
   <!-- SEARCH FORM -->
-  <form id="invoice-search-form" class="form-inline ml-3">
+  <form id="invoice-search-form" class="form-inline d-none d-sm-inline-block ml-3">
     <div class="input-group input-group-sm">
         <input id="invoice-id" class="form-control form-control-navbar" type="search" placeholder="Enter Invoice ID" aria-label="Search">
         <div class="input-group-append">
@@ -41,11 +46,7 @@
   <!-- Right navbar links -->
 
   <ul class="navbar-nav ml-auto">
-    <li class="nav-item">
-      <a class="nav-link" href="{{ route('invoices.create') }}">
-        <span class="badge badge-primary"><i class="fas fa-shopping-cart"></i> Sale</span>
-      </a>
-    </li>
+    
     <li class="nav-item">
       <a class="nav-link" href="{{ url('help') }}" target="_blank">
         <i class="fas fa-question-circle"></i>
@@ -90,7 +91,7 @@
     <li class="nav-item">
       <a class="nav-link" href="{{ route('logout') }}"
          onclick="event.preventDefault();document.getElementById('logout-form').submit();"><i class="fas fa-sign-out-alt"></i></a>
-      <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
+      <form id="logout-form" action="{{ route('logout') }}" method="POST" class="  d-none">
           @csrf
       </form>
     </li>

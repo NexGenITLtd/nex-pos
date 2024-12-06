@@ -136,13 +136,14 @@
                         <select id="role" name="roles[]" class="form-control" multiple>
                             <option value="">Select Role</option>
                             @foreach ($roles as $role)
-                                <option value="{{ $role->name }}"
+                                <option value="{{ $role }}"
                                     @if(is_array(old('roles')) && in_array($role, old('roles')))
                                         selected
                                     @endif
                                 >
-                                    {{ $role->name }}
+                                    {{ $role }}
                                 </option>
+                                
                             @endforeach
                         </select>
                         @error('role')

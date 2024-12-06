@@ -16,7 +16,7 @@ class MenuController extends Controller
         $this->middleware('auth');
         $this->middleware('permission:view menu')->only('index','show');
         $this->middleware('permission:create menu')->only('create', 'store', 'insertMenus');
-        $this->middleware('permission:update menu')->only('edit', 'update','sellProductUpdate','sellProductUpdateQty','sellProductDelete');
+        $this->middleware('permission:update menu')->only('edit', 'update','sellProductUpdate','sellProductUpdateQty','sellProductDelete','updateOrder');
         $this->middleware('permission:delete menu')->only('destroy');
     }
 
@@ -128,6 +128,18 @@ class MenuController extends Controller
         ");
     }
 
+    public function updateOrder(Request $request)
+    {
+        $orderedIds = $request->input('ordered_ids');
+
+        foreach ($orderedIds as $index => $menuId) {
+            $menu = Menu::findOrFail(str_replace('menu-', '', $menuId)); // Extract the ID from the row ID
+            $menu->order = $index + 1; // Update the order (index starts from 0, so add 1)
+            $menu->save();
+        }
+
+        return response()->json(['message' => 'Order updated successfully']);
+    }
 
     // Show the form for editing a specific menu
     public function edit(Menu $menu)

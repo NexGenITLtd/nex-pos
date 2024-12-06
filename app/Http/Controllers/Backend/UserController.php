@@ -33,7 +33,8 @@ class UserController extends Controller
     public function create()
     {
         $stores = Store::all();
-        $roles = Role::all();
+        // $roles = Role::all();
+        $roles = Role::pluck('name','name')->all();
         return view('users.create', compact('stores', 'roles'));
     }
 
@@ -46,8 +47,7 @@ class UserController extends Controller
         'email' => 'required|email|max:255|unique:users,email',
         'image' => 'nullable|image|mimes:jpg,jpeg,png,gif|max:2048',
         'store_id' => 'required|integer|exists:stores,id',
-        'roles' => 'required|array|min:1',
-        'roles.*' => 'exists:roles,id', // Validate that roles exist
+        'roles' => 'required|array', 
         'password' => 'required|string|min:6|confirmed',
     ]);
 
@@ -97,7 +97,8 @@ class UserController extends Controller
     {
         $user = User::findOrFail($id);
         $stores = Store::all();
-        $roles = Role::all();
+        // $roles = Role::all();
+        $roles = Role::pluck('name','name')->all();
         return view('users.edit', compact('user', 'stores', 'roles'));
     }
 

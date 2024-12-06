@@ -42,9 +42,8 @@
 
                 <div class="card">
                     <div class="card-header">
-                        <h4>Edit User
-                            <a href="{{ url('users') }}" class="btn btn-danger float-end">Back</a>
-                        </h4>
+                        <h4 class="card-title">Edit User</h4>
+                        <div class="card-tools"><a href="{{ url('users') }}" class="btn btn-danger float-end">Back</a></div>
                     </div>
                     <div class="card-body">
                         <form action="{{ url('users/'.$user->id) }}" method="POST">
@@ -64,6 +63,21 @@
                                 <label for="">Password</label>
                                 <input type="text" name="password" class="form-control" />
                                 @error('password') <span class="text-danger">{{ $message }}</span> @enderror
+                            </div>
+                            <!-- Store -->
+                            <div class="mb-3">
+                                <label for="store_id">Store</label>
+                                <select id="store_id" name="store_id" class="form-control">
+                                    <option value="">Select a store</option>
+                                    @foreach ($stores as $store)
+                                        <option value="{{ $store->id }}" {{ old('store_id', $user->store_id) == $store->id ? 'selected' : '' }}>
+                                            {{ $store->name }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                                @error('store_id')
+                                    <div class="text-danger">{{ $message }}</div>
+                                @enderror
                             </div>
                             <div class="mb-3">
                                 <label for="">Roles</label>

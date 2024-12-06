@@ -48,8 +48,8 @@ Route::group(['middleware' => ['role:super-admin|admin']], function() {
     Route::get('roles/{roleId}/give-permissions', [App\Http\Controllers\RoleController::class, 'addPermissionToRole']);
     Route::put('roles/{roleId}/give-permissions', [App\Http\Controllers\RoleController::class, 'givePermissionToRole']);
 
-    // Route::resource('users', App\Http\Controllers\UserController::class);
-    // Route::get('users/{userId}/delete', [App\Http\Controllers\UserController::class, 'destroy']);
+    Route::resource('users', App\Http\Controllers\UserController::class);
+    Route::get('users/{userId}/delete', [App\Http\Controllers\UserController::class, 'destroy']);
 
 });
 
@@ -60,6 +60,9 @@ Route::group(['middleware' => ['role:super-admin|admin']], function() {
         'menus' => MenuController::class,
         'role-menus' => RoleMenuController::class,
     ]);
+    // In routes/web.php
+Route::post('menus/update-order', [MenuController::class, 'updateOrder'])->name('menus.updateOrder');
+
 
 // });
 // Auth Routes
@@ -76,7 +79,7 @@ Route::group(['middleware' => ['auth', 'role:super-admin|admin|station']], funct
 
     // Resources
     Route::resources([
-        'users' => UserController::class,
+        // 'users' => UserController::class,
         'employees' => EmployeeController::class,
         'stores' => StoreController::class,
         'customers' => CustomerController::class,

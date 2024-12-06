@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use App\Models\Store;
 use Illuminate\Http\Request;
 use Spatie\Permission\Models\Role;
 use Illuminate\Support\Facades\Hash;
@@ -25,8 +26,9 @@ class UserController extends Controller
 
     public function create()
     {
+        $stores = Store::all();
         $roles = Role::pluck('name','name')->all();
-        return view('role-permission.user.create', ['roles' => $roles]);
+        return view('role-permission.user.create', ['roles' => $roles, 'stores'=>$stores]);
     }
 
     public function store(Request $request)
@@ -35,12 +37,14 @@ class UserController extends Controller
             'name' => 'required|string|max:255',
             'email' => 'required|email|max:255|unique:users,email',
             'password' => 'required|string|min:8|max:20',
+            'store_id' => 'required|integer|exists:stores,id',
             'roles' => 'required'
         ]);
 
         $user = User::create([
                         'name' => $request->name,
                         'email' => $request->email,
+                        'store_id' => $request->store_id,
                         'password' => Hash::make($request->password),
                     ]);
 
@@ -52,9 +56,11 @@ class UserController extends Controller
     public function edit(User $user)
     {
         $roles = Role::pluck('name','name')->all();
+        $stores = Store::all();
         $userRoles = $user->roles->pluck('name','name')->all();
         return view('role-permission.user.edit', [
             'user' => $user,
+            'stores'=>$stores,
             'roles' => $roles,
             'userRoles' => $userRoles
         ]);
@@ -64,12 +70,14 @@ class UserController extends Controller
     {
         $request->validate([
             'name' => 'required|string|max:255',
+            'store_id' => 'required|exists:stores,id',
             'password' => 'nullable|string|min:8|max:20',
             'roles' => 'required'
         ]);
 
         $data = [
             'name' => $request->name,
+            'store_id' => $request->store_id,
             'email' => $request->email,
         ];
 
