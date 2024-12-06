@@ -20,7 +20,7 @@ class UserDataController extends Controller
     // Show a list of user data (index)
     public function index()
     {
-        $userData = UserData::all();  // Fetch all user data from the database
+        $userData = UserData::paginate(100);  // Fetch all user data from the database
         return view('user_data.index', compact('userData')); // Return the index view
     }
 

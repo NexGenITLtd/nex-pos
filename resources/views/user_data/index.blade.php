@@ -65,6 +65,7 @@
                                 <tr>
                                     <th>#</th>
                                     <th>Phone</th>
+                                    <th>Created At</th>
                                     <th class="text-center no-print">Actions</th>
                                 </tr>
                             </thead>
@@ -73,6 +74,7 @@
                                     <tr>
                                         <td>{{ $loop->iteration }}</td>
                                         <td>{{ $data->phone }}</td>
+                                        <td>{{ $data->created_at }}</td>
                                         <td class="text-center no-print">
                                             <a class="btn btn-sm btn-primary" href="{{ route('user-phone-data.edit', $data->id) }}">Edit</a> |
                                             <form action="{{ route('user-phone-data.destroy', $data->id) }}" method="POST" style="display:inline;">
@@ -85,6 +87,7 @@
                                 @endforeach
                             </tbody>
                         </table>
+                        <span class="float-right">{{ $userData->links() }}</span>
                     </div>
                 </div>
             </div>
