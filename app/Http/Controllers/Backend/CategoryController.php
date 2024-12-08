@@ -13,10 +13,10 @@ class CategoryController extends AppBaseController
     public function __construct()
     {
         $this->middleware('auth');
-        $this->middleware('permission:view categories')->only('index');
-        $this->middleware('permission:create categories')->only('create', 'store');
-        $this->middleware('permission:update categories')->only('edit', 'update');
-        $this->middleware('permission:delete categories')->only('destroy');
+        $this->middleware('permission:view product-category')->only('index');
+        $this->middleware('permission:create product-category')->only('create', 'store');
+        $this->middleware('permission:update product-category')->only('edit', 'update');
+        $this->middleware('permission:delete product-category')->only('destroy');
     }
 
     /**
@@ -29,7 +29,7 @@ class CategoryController extends AppBaseController
 
         $categories = ProductCategory::whereNull('parent_id')
             ->with('subcategories')
-            ->paginate(10); // Adjusted pagination for better performance
+            ->paginate(100); // Adjusted pagination for better performance
 
         return view('products.categories.index', compact('categories'));
     }

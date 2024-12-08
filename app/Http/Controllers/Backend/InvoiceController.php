@@ -16,9 +16,11 @@ use App\Models\Product;
 use App\Models\CustomerPayment;
 use App\Models\Cart;
 use App\Models\StockIn;
+use App\Models\SmsSetting;
 use Illuminate\Support\Facades\DB;
 use PDF;
 use Illuminate\Support\Collection;
+use App\Http\Controllers\SmsSendController;
 
 use Auth;
 
@@ -34,7 +36,7 @@ class InvoiceController extends Controller
     }
     public function create(Request $request){
   
-        $store_id = Auth::user()->store_id;
+        $store_id = Auth::user()->store_id ?? 1;
         
 	    $products = Product::where('status', 'active')
 	    ->with([
@@ -54,10 +56,15 @@ class InvoiceController extends Controller
 
 	    $suppliers = Supplier::get();
 	    $racks = Rack::where('store_id', Auth::user()->store_id)->get();
+
+		
+        // Retrieve the SMS settings for the store
+        $smsSetting = SmsSetting::where('store_id', $store_id)->first();
         return view('invoices.create')->with(compact(
         	'products',
         	'suppliers',
         	'racks',
+			'smsSetting',
 
         ));
     }
@@ -151,6 +158,27 @@ class InvoiceController extends Controller
                 $this->processPayment(Auth::user()->store_id, $invoice->id, 'card_payment', $request->card_payment, $request->card_account_no_id, $request->card_number, $request->card_type);
                 $this->processPayment(Auth::user()->store_id, $invoice->id, 'mobile_payment', $request->mobile_payment, $request->mobile_account_no_id, $request->sender_no, $request->trx_no);
             });
+
+			// If send_sms is checked, send the SMS
+			if ($request->has('send_sms') && $request->send_sms) {
+				// Check if phone number exists and is not empty
+				$phone = $request->input('phone');  // Retrieve the phone number from the request
+			
+				if ($phone && !empty($phone)) {
+					// Check if the phone number is valid (example: a valid phone number with 10 digits)
+					if (preg_match('/^\+?[0-9]{10,15}$/', $phone)) {
+						// If phone number is valid, proceed with sending SMS
+						$smsSendController = new SmsSendController();
+						$smsSendController->send($request, $invoice);
+					} else {
+						// Invalid phone number format
+						// return back()->withErrors('Invalid phone number format.');
+					}
+				} else {
+					// return back()->withErrors('Phone number is required to send SMS.');
+				}
+			}
+			
 
 			return $invoice->id;
         }

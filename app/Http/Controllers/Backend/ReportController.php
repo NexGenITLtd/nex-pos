@@ -23,7 +23,7 @@ class ReportController extends Controller
     public function __construct()
     {
         $this->middleware('auth');
-        $this->middleware('permission:show total report')->only('generateReport','generateStockReport','generateStockReportPdf');
+        $this->middleware('permission:show total-report')->only('generateReport','generateStockReport','generateStockReportPdf');
     }
     public function generateReport(Request $request)
     {

@@ -4,11 +4,11 @@ namespace App\Http\Controllers\Backend;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use App\Models\SellProduct;
+use App\Models\ReturnSellProduct;
 use App\Models\Store;
 use PDF;
 use Auth;
-class SellProductController extends Controller
+class ReturnSellProductController extends Controller
 {
     public function __construct()
     {
@@ -17,10 +17,10 @@ class SellProductController extends Controller
     }
     public function index(Request $request)
     {
-        $query = SellProduct::query();
+        $query = ReturnSellProduct::query();
 
         // Join the invoices table to access the store_id field
-        $query->join('invoices', 'sell_products.invoice_id', '=', 'invoices.id');
+        $query->join('invoices', 'return_sell_products.invoice_id', '=', 'invoices.id');
 
         // Initialize default date filter text
         $filterText = 'Today'; // Default is 'Today'
@@ -30,28 +30,28 @@ class SellProductController extends Controller
         if ($request->has('date_filter') && $request->date_filter) {
             switch ($request->date_filter) {
                 case 'today':
-                    $query->whereDate('sell_products.created_at', $now->toDateString());
+                    $query->whereDate('return_sell_products.created_at', $now->toDateString());
                     $filterText = 'Today';
                     break;
                 case 'previous_day':
-                    $query->whereDate('sell_products.created_at', $now->subDay()->toDateString());
+                    $query->whereDate('return_sell_products.created_at', $now->subDay()->toDateString());
                     $filterText = 'Previous Day';
                     break;
                 case 'last_7_days':
-                    $query->whereBetween('sell_products.created_at', [$now->subDays(7), $now]);
+                    $query->whereBetween('return_sell_products.created_at', [$now->subDays(7), $now]);
                     $filterText = 'Last 7 Days';
                     break;
                 case 'this_month':
-                    $query->whereMonth('sell_products.created_at', $now->month)->whereYear('sell_products.created_at', $now->year);
+                    $query->whereMonth('return_sell_products.created_at', $now->month)->whereYear('return_sell_products.created_at', $now->year);
                     $filterText = 'This Month';
                     break;
                 case 'this_year':
-                    $query->whereYear('sell_products.created_at', $now->year);
+                    $query->whereYear('return_sell_products.created_at', $now->year);
                     $filterText = 'This Year';
                     break;
                 case 'custom':
                     if ($request->start_date && $request->end_date) {
-                        $query->whereBetween('sell_products.created_at', [$request->start_date, $request->end_date]);
+                        $query->whereBetween('return_sell_products.created_at', [$request->start_date, $request->end_date]);
                         $filterText = 'Custom Range (' . Carbon::parse($request->start_date)->format('M d, Y') . ' - ' . Carbon::parse($request->end_date)->format('M d, Y') . ')';
                     }
                     break;
@@ -78,13 +78,13 @@ class SellProductController extends Controller
         }
 
         // Fetch the filtered data
-        $sellProducts = $query->select('sell_products.*')->get();
+        $returnSellProducts = $query->select('return_sell_products.*')->get();
         $stores = Store::all(); // Retrieve all stores for filtering options in the view
 
         // Create dynamic card header
         $cardHeader = "Sales Report for $filterText at $storeName";
 
-        return view('sell_products.index', compact('sellProducts', 'stores', 'cardHeader'));
+        return view('return_sell_products.index', compact('returnSellProducts', 'stores', 'cardHeader'));
     }
 
 
@@ -93,7 +93,7 @@ class SellProductController extends Controller
         $query = SellProduct::query();
 
         // Join the invoices table to access the store_id field
-        $query->join('invoices', 'sell_products.invoice_id', '=', 'invoices.id');
+        $query->join('invoices', 'return_sell_products.invoice_id', '=', 'invoices.id');
 
         // Initialize default date filter text
         $filterText = 'Today'; // Default is 'Today'
@@ -103,28 +103,28 @@ class SellProductController extends Controller
         if ($request->has('date_filter') && $request->date_filter) {
             switch ($request->date_filter) {
                 case 'today':
-                    $query->whereDate('sell_products.created_at', $now->toDateString());
+                    $query->whereDate('return_sell_products.created_at', $now->toDateString());
                     $filterText = 'Today';
                     break;
                 case 'previous_day':
-                    $query->whereDate('sell_products.created_at', $now->subDay()->toDateString());
+                    $query->whereDate('return_sell_products.created_at', $now->subDay()->toDateString());
                     $filterText = 'Previous Day';
                     break;
                 case 'last_7_days':
-                    $query->whereBetween('sell_products.created_at', [$now->subDays(7), $now]);
+                    $query->whereBetween('return_sell_products.created_at', [$now->subDays(7), $now]);
                     $filterText = 'Last 7 Days';
                     break;
                 case 'this_month':
-                    $query->whereMonth('sell_products.created_at', $now->month)->whereYear('sell_products.created_at', $now->year);
+                    $query->whereMonth('return_sell_products.created_at', $now->month)->whereYear('sell_products.created_at', $now->year);
                     $filterText = 'This Month';
                     break;
                 case 'this_year':
-                    $query->whereYear('sell_products.created_at', $now->year);
+                    $query->whereYear('return_sell_products.created_at', $now->year);
                     $filterText = 'This Year';
                     break;
                 case 'custom':
                     if ($request->start_date && $request->end_date) {
-                        $query->whereBetween('sell_products.created_at', [$request->start_date, $request->end_date]);
+                        $query->whereBetween('return_sell_products.created_at', [$request->start_date, $request->end_date]);
                         $filterText = 'Custom Range (' . Carbon::parse($request->start_date)->format('M d, Y') . ' - ' . Carbon::parse($request->end_date)->format('M d, Y') . ')';
                     }
                     break;
@@ -151,16 +151,16 @@ class SellProductController extends Controller
         }
 
         // Fetch the filtered data
-        $sellProducts = $query->select('sell_products.*')->get();
+        $returnSellProducts = $query->select('return_sell_products.*')->get();
 
         // Create dynamic card header
         $cardHeader = "Sales Report for $filterText at $storeName";
 
         // Pass the filtered data and card header to the view for PDF generation
-        $pdf = Pdf::loadView('sell_products.pdf', compact('sellProducts', 'cardHeader'));
+        $pdf = Pdf::loadView('return_sell_products.pdf', compact('returnSellProducts', 'cardHeader'));
 
         // Download the generated PDF
-        return $pdf->download('sell_products.pdf');
+        return $pdf->download('return_sell_products.pdf');
     }
 
 }

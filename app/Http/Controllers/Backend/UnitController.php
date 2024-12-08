@@ -13,10 +13,10 @@ class UnitController extends Controller
     public function __construct()
     {
         $this->middleware('auth');
-        $this->middleware('permission:view create update delete unit')->only('index','show','create', 'store','edit', 'update','destroy');
-        // $this->middleware('permission:create unit')->only();
-        // $this->middleware('permission:update unit')->only();
-        // $this->middleware('permission:delete unit')->only();
+        $this->middleware('permission:view unit')->only('index');
+        $this->middleware('permission:create unit')->only(['create', 'store']);
+        $this->middleware('permission:update unit')->only(['edit', 'update']);
+        $this->middleware('permission:delete unit')->only('destroy');
     }
     // Display a listing of units
     public function index()

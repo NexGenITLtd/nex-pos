@@ -12,10 +12,10 @@ class CardController extends Controller
     public function __construct()
     {
         $this->middleware('auth');
-        $this->middleware('permission:view card')->only('index');
-        $this->middleware('permission:create card')->only(['create', 'store']);
-        $this->middleware('permission:update card')->only(['edit', 'update']);
-        $this->middleware('permission:delete card')->only('destroy');
+        $this->middleware('permission:view payment-card-type')->only('index');
+        $this->middleware('permission:create payment-card-type')->only(['create', 'store']);
+        $this->middleware('permission:update payment-card-type')->only(['edit', 'update']);
+        $this->middleware('permission:delete payment-card-type')->only('destroy');
     }
     public function create()
     {

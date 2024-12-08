@@ -249,7 +249,9 @@
 			    <div class="col-md-4" v-if="carts.length>=0">
 			        <div class="card card-primary">
 						<div class="card-header p-2">
-						<h3 class="card-title">Payment Summery</h3>
+						<h3 class="card-title">
+						Bill Summary
+						</h3>
 						<div class="card-tools">
 							<select class="form-control form-control-sm" name="sale_person_id" id="sale_person_id" v-model="sale_person_id" ref="salePersonSelect" required data-placeholder="Select a sell person">
 								<option value="0">-- Select sellperson --</option>
@@ -306,7 +308,20 @@
 			        </div>
 			        <div class="card card-primary">
 						<div class="card-header">
-							<h3 class="card-title">Customer</h3>
+							<h3 class="card-title">
+							@if ($smsSetting->balance < $smsSetting->sms_rate)
+								<div class="alert alert-warning">
+									Insufficient balance to send SMS. Please recharge your account.
+								</div>
+							@endif
+
+							<div class="form-check mb-3">
+								<input class="form-check-input" type="checkbox" id="send_sms" v-model="send_sms" name="send_sms" value="1">
+								<label class="form-check-label" for="send_sms">
+									Send SMS to Customer
+								</label>
+							</div>
+							</h3>
 							<div class="card-tools">
 								<label for="make_member" class="float-right text-green mb-0 mr-1"><input type="checkbox" name="make_member" id="make_member" @change="handleMakeMemberChange" :checked="make_member === 'Member'"> Make Member</label>
 							</div>	
@@ -541,6 +556,7 @@
         name: '',
         phone: '',
         make_member: '',
+		send_sms: true,
 
         status: '',
       	product_id: '',
@@ -913,6 +929,7 @@
                     name: this.name,
                     phone: this.phone,
                     make_member: this.make_member,
+					send_sms: this.send_sms,
 
 					cash_payment: this.cash_payment,
 					cash_account_no_id: this.cash_account_no_id,
@@ -968,6 +985,7 @@
 		    this.name = '';
 		    this.phone = '';
 		    this.make_member = '';
+		    this.send_sms = true;
 
 
 		    this.cash_payment = 0;

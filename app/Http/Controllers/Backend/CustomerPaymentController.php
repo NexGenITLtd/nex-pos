@@ -16,10 +16,10 @@ class CustomerPaymentController extends Controller
     public function __construct()
     {
         $this->middleware('auth');
-        $this->middleware('permission:view customer payment')->only('index');
-        $this->middleware('permission:create customer payment')->only('create', 'store');
-        $this->middleware('permission:update customer payment')->only('edit', 'update');
-        $this->middleware('permission:delete customer payment')->only('destroy');
+        $this->middleware('permission:view customer-payment')->only('index','show');
+        $this->middleware('permission:create customer-payment')->only('create', 'store');
+        $this->middleware('permission:update customer-payment')->only('edit', 'update');
+        $this->middleware('permission:delete customer-payment')->only('destroy');
     } 
     public function index(Request $request)
     {

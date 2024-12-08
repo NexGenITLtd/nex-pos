@@ -16,10 +16,10 @@ class SupplierPaymentAlertController extends Controller
     public function __construct()
     {
         $this->middleware('auth');
-        $this->middleware('permission:view supplier payment alert')->only('index','show');
-        $this->middleware('permission:create supplier payment alert')->only('create', 'store');
-        $this->middleware('permission:update supplier payment alert')->only('edit', 'update');
-        $this->middleware('permission:delete supplier payment alert')->only('destroy');
+        $this->middleware('permission:view supplier-payment-alert')->only('index','show');
+        $this->middleware('permission:create supplier-payment-alert')->only('create', 'store');
+        $this->middleware('permission:update supplier-payment-alert')->only('edit', 'update');
+        $this->middleware('permission:delete supplier-payment-alert')->only('destroy');
     }
 
     public function create()

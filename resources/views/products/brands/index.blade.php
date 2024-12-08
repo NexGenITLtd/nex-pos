@@ -104,7 +104,7 @@
     $("#example1").DataTable();
     $('#example2').DataTable({
       "paging": true,
-      "lengthChange": true,
+      "lengthChange": false,
       "searching": true,
       "ordering": true,
       "info": true,

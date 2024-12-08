@@ -14,7 +14,7 @@ class SettingsController extends Controller
     public function __construct()
     {
         $this->middleware('auth');
-        $this->middleware('permission:update website information')->only('edit');
+        $this->middleware('permission:update website-info')->only('edit');
     }
     public function edit(Request $request) {
         $site_info = SiteInfo::first();

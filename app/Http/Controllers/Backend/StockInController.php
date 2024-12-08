@@ -20,10 +20,10 @@ class StockInController extends Controller
     public function __construct()
     {
         $this->middleware('auth');
-        $this->middleware('permission:view stock in')->only('index','show');
-        $this->middleware('permission:create stock in')->only('create', 'store');
-        $this->middleware('permission:update stock in')->only('updateStock', 'addStockModify');
-        $this->middleware('permission:delete stock in')->only('destroy','deleteStock');
+        $this->middleware('permission:view stock-in')->only('index','show');
+        $this->middleware('permission:create stock-in')->only('create', 'store');
+        $this->middleware('permission:update stock-in')->only('updateStock', 'addStockModify');
+        $this->middleware('permission:delete stock-in')->only('destroy','deleteStock');
     }
     public function index(){
         $batchs = Batch::with('store')->latest()->paginate(100);

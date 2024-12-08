@@ -32,10 +32,6 @@ class UserRolePermissionSeeder extends Seeder
         Permission::firstOrCreate(['name' => 'update user']);
         Permission::firstOrCreate(['name' => 'delete user']);
 
-        Permission::firstOrCreate(['name' => 'view product']);
-        Permission::firstOrCreate(['name' => 'create product']);
-        Permission::firstOrCreate(['name' => 'update product']);
-        Permission::firstOrCreate(['name' => 'delete product']);
 
 
         // Create Roles
@@ -65,6 +61,7 @@ class UserRolePermissionSeeder extends Seeder
                     'name' => 'Super Admin',
                     'email' => 'superadmin@gmail.com',
                     'password' => Hash::make ('12345678'),
+                    'role_id' => 1,
                 ]);
 
         $superAdminUser->assignRole($superAdminRole);
@@ -76,6 +73,7 @@ class UserRolePermissionSeeder extends Seeder
                             'name' => 'Admin',
                             'email' => 'admin@gmail.com',
                             'password' => Hash::make ('12345678'),
+                            'role_id' => 2,
                         ]);
 
         $adminUser->assignRole($adminRole);
@@ -86,6 +84,7 @@ class UserRolePermissionSeeder extends Seeder
                             'name' => 'Station',
                             'email' => 'station@gmail.com',
                             'password' => Hash::make ('12345678'),
+                            'role_id' => 3,
                         ]);
 
         $stationUser->assignRole($stationRole);
@@ -97,6 +96,7 @@ class UserRolePermissionSeeder extends Seeder
                             'name' => 'Staff',
                             'email' => 'staff@gmail.com',
                             'password' => Hash::make('12345678'),
+                            'role_id' => 4,
                         ]);
 
         $staffUser->assignRole($staffRole);

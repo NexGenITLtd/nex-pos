@@ -14,10 +14,10 @@ class SupplierPaymentController extends Controller
     public function __construct()
     {
         $this->middleware('auth');
-        $this->middleware('permission:view supplier payment')->only('index','show');
-        $this->middleware('permission:create supplier payment')->only('create', 'store');
-        $this->middleware('permission:update supplier payment')->only('edit', 'update');
-        $this->middleware('permission:delete supplier payment')->only('destroy');
+        $this->middleware('permission:view supplier-payment')->only('index','show');
+        $this->middleware('permission:create supplier-payment')->only('create', 'store');
+        $this->middleware('permission:update supplier-payment')->only('edit', 'update');
+        $this->middleware('permission:delete supplier-payment')->only('destroy');
     }
 
     public function index(Request $request)

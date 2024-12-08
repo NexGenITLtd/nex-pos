@@ -48,7 +48,7 @@
           <!-- /.card-header -->
           <div class="card-body">
             <div class="table-responsive">
-              <table class="table table-sm table-bordered mt-4 w-100">
+              <table class="table table-sm table-bordered mt-4 w-100" class="example2">
               <thead>
                   <tr>
                       <th>Name</th>
@@ -134,7 +134,7 @@
     $("#example1").DataTable();
     $('#example2').DataTable({
       "paging": true,
-      "lengthChange": true,
+      "lengthChange": false,
       "searching": true,
       "ordering": true,
       "info": true,

@@ -12,10 +12,10 @@ class BrandController extends AppBaseController
     public function __construct()
     {
         $this->middleware('auth');
-        $this->middleware('permission:view brands')->only('index');
-        $this->middleware('permission:create brands')->only(['create', 'store']);
-        $this->middleware('permission:update brands')->only(['edit', 'update']);
-        $this->middleware('permission:delete brands')->only('destroy');
+        $this->middleware('permission:view product-brand')->only('index');
+        $this->middleware('permission:create product-brand')->only(['create', 'store']);
+        $this->middleware('permission:update product-brand')->only(['edit', 'update']);
+        $this->middleware('permission:delete product-brand')->only('destroy');
     }
 
     public function index()

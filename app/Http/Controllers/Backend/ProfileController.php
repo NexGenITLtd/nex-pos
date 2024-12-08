@@ -13,8 +13,8 @@ class ProfileController extends Controller
     public function __construct()
     {
         $this->middleware('auth');
-        $this->middleware('permission:staff update profile')->only('profile');
-        $this->middleware('permission:staff update password')->only('showChangePasswordForm','changePassword');
+        $this->middleware('permission:update self-profile')->only('profile');
+        $this->middleware('permission:update self-password')->only('showChangePasswordForm','changePassword');
         
     }
     public function profile(UpdateProfileRequest $request)

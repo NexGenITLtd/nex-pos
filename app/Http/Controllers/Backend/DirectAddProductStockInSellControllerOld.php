@@ -16,10 +16,20 @@ use App\Models\ProductBrand;
 use App\Http\Requests\DirectStockInRequest;
 use App\Http\Requests\StockInDirectSellRequest;
 use Illuminate\Support\Facades\DB;
+use Spatie\Permission\Models\Permission;
 use Auth;
 
 class DirectAddProductStockInSellController extends Controller
 {
+
+	public function __construct()
+    {
+        $this->middleware('auth');
+        $this->middleware('permission:view cart')->only('index');
+        $this->middleware('permission:create cart')->only(['create', 'store', 'storeDirect']);
+        $this->middleware('permission:update cart')->only(['edit', 'update']);
+        $this->middleware('permission:delete cart')->only('destroy');
+    }
 	public function create()
 	{
 		$stores = Store::get();
@@ -146,13 +156,11 @@ class DirectAddProductStockInSellController extends Controller
 	    }
 	}
 
-
 	private function generateInvoiceNoForDirectSell()
 	{
 	    return Auth::user()->store->name.' Direct Stock Sell: '.now();
 	}
 	
-
 	private function generateInvoiceNoForDirectStock($storeId)
 	{
 	    // Retrieve the store ID from the request
@@ -169,6 +177,4 @@ class DirectAddProductStockInSellController extends Controller
 	        return 'Direct Stock: ' . strtoupper(str_random(10)) . '-' . now()->timestamp;
 	    }
 	}
-
-
 }

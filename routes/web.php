@@ -2,13 +2,14 @@
 
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
+use App\Http\Controllers\SmsSendController;
 use App\Http\Controllers\Backend\{
     NotificationController, HomeController, UserController, EmployeeController, StoreController, CustomerController,
     CategoryController, BrandController, SupplierController, RackController, AccountController, CardController,
     SupplierPaymentController, SupplierPaymentAlertController, ProductController, DirectAddProductStockInSellController,
     ExpenseController, AssetController, EmployeeSalaryController, StockInController, ReportController, SupplierReportController,
-    ProfitReportController, DailyReportController, InvoiceController, SellProductController, RoleMenuController, MenuController,
-    SettingsController, ProfileController, UnitController, CustomerPaymentController, CartController,UserDataController
+    ProfitReportController, DailyReportController, InvoiceController, SellProductController, ReturnSellProductController, MenuController,
+    SettingsController, ProfileController, UnitController, SmsSettingController, CustomerPaymentController, CartController,UserDataController
 };
 use App\Http\Controllers\Api\{
     CategoryController as ApiCategoryController, BrandController as ApiBrandController, ProductController as ApiProductController,
@@ -19,23 +20,11 @@ use App\Http\Controllers\Api\{
 Route::view('/help', 'help');
 Route::view('/unauthorized', 'errors.unauthorized')->name('unauthorized');
 
-Route::get('route-list', [App\Http\Controllers\HomeController::class, 'showRoutes']);
-
-Route::get('insert-roles', [RoleMenuController::class, 'insertRoles']);
-Route::get('insert-menus', [MenuController::class, 'insertMenus']);
-Route::get('assign_admin_menus', [RoleMenuController::class, 'assignMenusToAdmin'])->name('role_menus.assign_admin_menus');
-
-// user data 
-
 // phone number collection 
 Route::resource('user-phone-data', UserDataController::class);
 
 Route::post('/user-phone-data/get-columns', [UserDataController::class, 'getColumns'])->name('user-phone-data.get-columns');
 Route::post('/user-phone-data/delete-all', [UserDataController::class, 'deleteAll'])->name('user-phone-data.delete-all');
-
-
-// routes/web.php
-// Route::post('/get-columns', [UserDataController::class, 'getColumns'])->name('get.columns');
 
 
 Route::group(['middleware' => ['role:super-admin|admin']], function() {
@@ -53,25 +42,17 @@ Route::group(['middleware' => ['role:super-admin|admin']], function() {
 
 });
 
-// Menu Management (Admin Only)
-// Route::middleware(['role:1'])->group(function () {
 
-    Route::resources([
-        'menus' => MenuController::class,
-        'role-menus' => RoleMenuController::class,
-    ]);
-    // In routes/web.php
+Route::resources([
+    'menus' => MenuController::class,
+]);
 Route::post('menus/update-order', [MenuController::class, 'updateOrder'])->name('menus.updateOrder');
 
-
-// });
 // Auth Routes
 Auth::routes(['verify' => true]);
 
 // Backend Routes (Protected by Middleware)
-Route::group(['middleware' => ['auth', 'role:super-admin|admin|station']], function () {
-    // Protected routes for role_id 1 (admin), 2 (sub_admin), and 3 (station)
-
+Route::group(['middleware' => ['auth', 'role:super-admin|admin|station|staff']], function () {
     // Dashboard
     Route::get('/', [HomeController::class, 'index'])->name('dashboard');
     Route::get('home', [HomeController::class, 'index'])->name('home');
@@ -95,7 +76,9 @@ Route::group(['middleware' => ['auth', 'role:super-admin|admin|station']], funct
         'invoices' => InvoiceController::class,
         'units' => UnitController::class,
         'customer-payments' => CustomerPaymentController::class,
+        'sms-settings' => SmsSettingController::class,
     ]);
+    Route::post('sms/send', [SmsSendController::class, 'send'])->name('sms.send');
 
     // Bank Management
     Route::prefix('bank')->group(function () {
@@ -156,7 +139,9 @@ Route::group(['middleware' => ['auth', 'role:super-admin|admin|station']], funct
 
     // Sell Products
     Route::get('/sell-products', [SellProductController::class, 'index'])->name('sell-products.index');
+    Route::get('/return-sell-products', [ReturnSellProductController::class, 'index'])->name('return-sell-products.index');
     Route::get('/sell-products/pdf', [SellProductController::class, 'downloadPDF'])->name('sell-products.pdf');
+    Route::get('/return-sell-products/pdf', [ReturnSellProductController::class, 'downloadPDF'])->name('return-sell-products.pdf');
 
     
 
@@ -179,10 +164,10 @@ Route::group(['middleware' => ['auth', 'role:super-admin|admin|station']], funct
 
 
         // Cart Operations
-        Route::post('/add-to-cart', [CartController::class, 'add_to_cart'])->name('add-to-cart');
-        Route::get('/cart-list', [CartController::class, 'cart_list'])->name('cart-list');
-        Route::post('/update-to-cart', [CartController::class, 'update_to_cart'])->name('update-to-cart');
-        Route::get('/remove-to-cart/{id}', [CartController::class, 'remove_to_cart'])->name('remove-to-cart');
+        Route::post('/add-to-cart', [CartController::class, 'store'])->name('add-to-cart');
+        Route::get('/cart-list', [CartController::class, 'index'])->name('cart-list');
+        Route::post('/update-to-cart', [CartController::class, 'update'])->name('update-to-cart');
+        Route::get('/remove-to-cart/{id}', [CartController::class, 'destroy'])->name('remove-to-cart');
     });
 
 });

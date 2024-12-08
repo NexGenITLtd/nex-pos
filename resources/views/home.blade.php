@@ -46,7 +46,7 @@ $stores = App\Models\Store::get();
         <!-- Info boxes -->
         <div class="row">
             <div class="col-md-12">
-                @can('dashboard show')
+                @can('show dashboard')
                 <div class="card">
                     <div class="card-header ">
                         <h5 class="card-title mb-0">{{ $cardHeader }}</h5>
@@ -141,7 +141,7 @@ $stores = App\Models\Store::get();
                                     </div>
                                 </div>
                             </div>
-                            @can('profit show')
+                            @can('show profit')
                             <!-- Total Profit -->
                             <div class="col-12 col-sm-6 col-md-3">
                                 <div class="info-box">

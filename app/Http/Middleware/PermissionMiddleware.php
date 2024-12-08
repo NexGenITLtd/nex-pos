@@ -23,17 +23,6 @@ class PermissionMiddleware
             abort(404, 'Menu not found');
         }
 
-        // Check for permissions in the role_menus table
-        $permission = DB::table('role_menus')
-            ->where('role_id', $roleId)
-            ->where('menu_id', $menu->id)
-            ->first();
-
-        // If no permission or no specific action permission
-        if (!$permission || !$permission->$action) {
-            abort(403, 'You do not have permission for this action');
-        }
-
         return $next($request);
     }
 }

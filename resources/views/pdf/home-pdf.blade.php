@@ -53,7 +53,7 @@
             <th>Total Purchase Price</th>
             <td>{{ number_format($total_purchase_price, 2) }}</td>
         </tr>
-        @can('profit show')
+        @can('show profit')
         <tr>
             <th>Total Profit</th>
             <td>{{ number_format($total_profit, 2) }}</td>

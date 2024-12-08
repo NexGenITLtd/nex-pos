@@ -15,6 +15,7 @@ use App\Models\ProductBrand;
 use App\Models\Supplier;
 use App\Models\Unit;
 use Illuminate\Support\Facades\DB;
+use Spatie\Permission\Models\Permission;
 use Auth;
 
 class DirectAddProductStockInSellController extends Controller
@@ -22,8 +23,8 @@ class DirectAddProductStockInSellController extends Controller
     public function __construct()
     {
         $this->middleware('auth');
-        $this->middleware('permission:view direct stock in')->only('index','show');
-        $this->middleware('permission:create direct stock in')->only('create', 'store', 'storeDirect');
+        $this->middleware('permission:view stock-in')->only('index','show');
+        $this->middleware('permission:create stock-in')->only('create', 'store', 'storeDirect');
     }
     public function create()
     {

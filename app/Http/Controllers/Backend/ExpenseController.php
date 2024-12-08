@@ -66,7 +66,6 @@ class ExpenseController extends Controller
         }
     }
 
-
     public function index(){
         $expenses = Expense::with('store','bank_account')->orderBy('id')->paginate(100);
         return view("expenses.index")->with(compact('expenses'));
@@ -84,6 +83,7 @@ class ExpenseController extends Controller
             ->get();
         return view("expenses.edit")->with(compact('expense','bank_accounts','stores'));
     }
+    
     public function update(Request $request, $id)
     {
         $expense = Expense::findOrFail($id);

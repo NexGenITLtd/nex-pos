@@ -13,6 +13,7 @@ use App\Models\StockIn;
 use App\Models\SellProduct;
 use App\Models\SupplierPayment;
 use Carbon\Carbon;
+use Spatie\Permission\Models\Permission;
 use PDF;
 use Auth;
 
@@ -23,10 +24,10 @@ class DailyReportController extends Controller
     public function __construct()
     {
         $this->middleware('auth');
-        $this->middleware('permission:view daily report')->only('index','show');
-        $this->middleware('permission:create daily report')->only('create', 'store');
-        $this->middleware('permission:update daily report')->only('edit', 'update');
-        $this->middleware('permission:delete daily report')->only('destroy');
+        $this->middleware('permission:view daily-report')->only('index','show');
+        $this->middleware('permission:create daily-report')->only('create', 'store');
+        $this->middleware('permission:update daily-report')->only('edit', 'update');
+        $this->middleware('permission:delete daily-report')->only('destroy');
     }
 
     public function index(Request $request)
@@ -232,7 +233,6 @@ class DailyReportController extends Controller
 
 	    return redirect()->route('dailyreports.index')->with('success', 'Daily Report saved successfully!');
 	}
-
 
     public function edit($id)
     {

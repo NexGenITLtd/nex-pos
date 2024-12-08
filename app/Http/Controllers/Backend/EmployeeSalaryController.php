@@ -14,10 +14,10 @@ class EmployeeSalaryController extends Controller
     public function __construct()
     {
         $this->middleware('auth');
-        $this->middleware('permission:view employee salary')->only('index','show');
-        $this->middleware('permission:create employee salary')->only('create', 'store');
-        $this->middleware('permission:update employee salary')->only('edit', 'update');
-        $this->middleware('permission:delete employee salary')->only('destroy');
+        $this->middleware('permission:view employee-salary')->only('index','show');
+        $this->middleware('permission:create employee-salary')->only('create', 'store');
+        $this->middleware('permission:update employee-salary')->only('edit', 'update');
+        $this->middleware('permission:delete employee-salary')->only('destroy');
     }
     public function index(){
         $salary_pays = EmployeeSalary::with('user','bank_account')->orderBy('id','desc')->paginate(100);

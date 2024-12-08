@@ -13,10 +13,10 @@ class AccountController extends Controller
     public function __construct()
     {
         $this->middleware('auth');
-        $this->middleware('permission:view bank')->only('index');
-        $this->middleware('permission:create bank')->only(['create', 'store']);
-        $this->middleware('permission:update bank')->only(['edit', 'update']);
-        $this->middleware('permission:delete bank')->only('destroy');
+        $this->middleware('permission:view bank-account')->only('index');
+        $this->middleware('permission:create bank-account')->only(['create', 'store']);
+        $this->middleware('permission:update bank-account')->only(['edit', 'update']);
+        $this->middleware('permission:delete bank-account')->only('destroy');
     }
 
     public function index()

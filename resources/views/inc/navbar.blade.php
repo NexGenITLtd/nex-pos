@@ -13,21 +13,6 @@
         <span class="badge badge-primary"><i class="fas fa-shopping-cart"></i> Sale</span>
       </a>
     </li>
-    @php
-    $menus = App\Models\Menu::with('children')->orderBy('order', 'asc')->get();
-    @endphp
-
-    @if($menus->count() === 0)
-    @foreach (['create menu' => 'insert-menus', 'create role' => 'insert-roles'] as $permission => $url)
-    @can($permission)
-    <li class="nav-item d-none d-sm-inline-block">
-        <a href="{{ url($url) }}" target="_blank" class="nav-link">{{ ucfirst(str_replace('create ', '', $permission)) }} Sync</a>
-    </li>
-    @endcan
-    @endforeach
-    @endif
-
-    
   </ul>
 
   <!-- SEARCH FORM -->
@@ -70,6 +55,7 @@
             <span class="badge badge-warning navbar-badge">{{ auth()->user()->unreadNotifications->count() }}</span>
         </a>
         <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
+        @if(auth()->user()->unreadNotifications->count()>0)
             <span class="dropdown-item dropdown-header">{{ auth()->user()->unreadNotifications->count() }} Notifications</span>
             <div class="dropdown-divider"></div>
             
@@ -85,6 +71,7 @@
             
             <div class="dropdown-divider"></div>
             <a href="{{ route('notifications.index') }}" class="dropdown-item dropdown-footer">See All Notifications</a>
+            @endif
         </div>
     </li>
     @endcan

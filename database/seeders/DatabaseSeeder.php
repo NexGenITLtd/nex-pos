@@ -11,7 +11,7 @@ class DatabaseSeeder extends Seeder
      *
      * @return void
      */
-    public function run()
+    public function run(): void
     {
         // First, ensure that user roles and permissions are set up
         $this->call(UserRolePermissionSeeder::class);
@@ -19,5 +19,6 @@ class DatabaseSeeder extends Seeder
         // Now, we can call the other seeders
         $this->call(SiteInfoSeeder::class);
         $this->call(MenuSeeder::class);
+        $this->call(SmsSettingsSeeder::class);
     }
 }

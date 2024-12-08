@@ -14,7 +14,10 @@ class UserDataController extends Controller
     public function __construct()
     {
         $this->middleware('auth');
-        $this->middleware('permission:view create update delete phone number')->only('index', 'show', 'create', 'store', 'edit', 'update', 'destroy', 'getColumns', 'deleteAll');
+        $this->middleware('permission:view user-data', ['only' => ['index']]);
+        $this->middleware('permission:create user-data', ['only' => ['create', 'store']]);
+        $this->middleware('permission:update user-data', ['only' => ['edit', 'update']]);
+        $this->middleware('permission:delete user-data', ['only' => ['destroy']]);
     }
 
     // Show a list of user data (index)

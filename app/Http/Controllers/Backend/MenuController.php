@@ -15,67 +15,13 @@ class MenuController extends Controller
     {
         $this->middleware('auth');
         $this->middleware('permission:view menu')->only('index','show');
-        $this->middleware('permission:create menu')->only('create', 'store', 'insertMenus');
-        $this->middleware('permission:update menu')->only('edit', 'update','sellProductUpdate','sellProductUpdateQty','sellProductDelete','updateOrder');
+        $this->middleware('permission:create menu')->only('create', 'store');
+        $this->middleware('permission:update menu')->only('edit', 'update','updateOrder');
         $this->middleware('permission:delete menu')->only('destroy');
-    }
-
-    public function getRoleBasedMenu()
-    {
-        // Get the current logged-in user's roles
-        // $userRoles = Auth::user()->roles->pluck('id')->toArray(); // Assuming user has many roles
-
-        // // Fetch menus that are allowed for the user's roles
-        // $menuItems = Menu::with('children')->orderBy('order', 'asc')
-        // ->get();
-
-        // return view('inc.sidebar', compact('menuItems'));
-    }
-
-	public function insertMenus()
-    {
-        $menuItems = [
-            ['name' => 'Dashboard', 'route' => 'dashboard', 'icon' => 'fas fa-tachometer-alt'],
-            ['name' => 'New Sale', 'route' => 'invoices.create', 'icon' => 'fas fa-shopping-cart'],
-            ['name' => 'Invoices', 'route' => 'invoices.index', 'icon' => 'fas fa-file-invoice'],
-            ['name' => 'Reports', 'route' => 'reports.index', 'icon' => 'fas fa-file-alt'],
-            ['name' => 'Products', 'route' => 'products.index', 'icon' => 'fas fa-box'],
-            ['name' => 'StockIns', 'route' => 'stockins.index', 'icon' => 'fas fa-arrow-down'],
-            ['name' => 'Stores', 'route' => 'stores.index', 'icon' => 'fas fa-store'],
-            ['name' => 'Suppliers', 'route' => 'suppliers.index', 'icon' => 'fas fa-truck'],
-            ['name' => 'Categories', 'route' => 'categories.index', 'icon' => 'fas fa-tags'],
-            ['name' => 'Brands', 'route' => 'brands.index', 'icon' => 'fas fa-tag'],
-            ['name' => 'Units', 'route' => 'units.index', 'icon' => 'fas fa-ruler'],
-            ['name' => 'Racks', 'route' => 'racks.index', 'icon' => 'fas fa-boxes'],
-            ['name' => 'Users', 'route' => 'users.index', 'icon' => 'fas fa-users'],
-            ['name' => 'Accounts', 'route' => 'accounts.index', 'icon' => 'fas fa-user-circle'],
-            ['name' => 'Expenses', 'route' => 'expenses.index', 'icon' => 'fas fa-file-invoice-dollar'],
-            ['name' => 'Assets', 'route' => 'assets.index', 'icon' => 'fas fa-archive'],
-        ];
-
-        foreach ($menuItems as $item) {
-            // Create the menu item if it doesn't exist
-            $menu = Menu::firstOrCreate(['name' => $item['name']], $item);
-
-            // Create or check for permission based on the route
-            Permission::firstOrCreate(['name' => 'view-menu-' . strtolower(str_replace(' ', '_', $item['name']))]);
-
-            // Optionally assign the created permission to the menu item
-            // Example: Assigning 'view-menu-[menu_name]' permission to the menu item or a role
-        }
-        return "Menus inserted successfully!";
-
-        return redirect()->back()->with('flash_success',"
-                <script>
-                toastr.success('Menus inserted successfully!');
-                </script>
-                ");
-        // return response()->json(['message' => 'Menus inserted successfully!']);
     }
     // Display a list of menus
     public function index()
     {
-        
         $menus = Menu::with('children')->whereNull('parent_id')->orderBy('order')->paginate(200);
         return view('menus.index', compact('menus'));
     }
@@ -95,7 +41,6 @@ class MenuController extends Controller
         // Pass the data to the view
         return view('menus.create', compact('parentMenus', 'routes'));
     }
-
 
     public function store(Request $request)
     {
@@ -202,7 +147,6 @@ class MenuController extends Controller
             </script>
         ");
     }
-
 
     public function destroy(Menu $menu)
     {

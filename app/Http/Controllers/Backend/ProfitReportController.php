@@ -14,7 +14,7 @@ class ProfitReportController extends Controller
 	public function __construct()
     {
         $this->middleware('auth');
-        $this->middleware('permission:view profit report')->only('index','show');
+        $this->middleware('permission:view profit-report')->only('index','show');
     }
     public function index(Request $request)
 	{

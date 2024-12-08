@@ -13,7 +13,7 @@ class SiteInfoSeeder extends Seeder
      *
      * @return void
      */
-    public function run()
+    public function run(): void
     {
         // Check if the SiteInfo record exists, and create a default one if not
         if (!SiteInfo::first()) {
@@ -27,9 +27,9 @@ class SiteInfoSeeder extends Seeder
 
             // Create the SiteInfo record with user_id = 1
             SiteInfo::create([
-                'name' => 'Your Company Name',
-                'phone' => '1234567890',
-                'email' => 'contact@yourcompany.com',
+                'name' => 'Company Name',
+                'phone' => '01731002123',
+                'email' => 'nexgenitltd@gmail.com',
                 'logo' => 'default-logo.png',
                 'print_logo' => 'default-print-logo.png',
                 'fav_icon' => 'default-favicon.ico',
@@ -38,8 +38,8 @@ class SiteInfoSeeder extends Seeder
                 'currency' => 'USD',
                 'map_embed' => '<iframe ...></iframe>',
                 'return_policy' => 'Your return policy goes here.',
-                'barcode_height' => '1in',
-                'barcode_width' => '1.5in',
+                'barcode_height' => '100px',
+                'barcode_width' => '160px',
                 'user_id' => 1, // Ensure this user ID exists in the users table
             ]);
         }

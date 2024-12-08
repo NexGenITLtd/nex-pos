@@ -50,9 +50,9 @@
                     <div class="card-header">
                         <h4 class="card-title">Permissions </h4>
                         <div class="card-tools">
-                            @can('create permission')
+                            <!-- @can('create permission') -->
                             <a href="{{ url('permissions/create') }}" class="btn btn-sm btn-primary float-end">Add Permission</a>
-                            @endcan
+                            <!-- @endcan -->
                         </div>
                     </div>
 
