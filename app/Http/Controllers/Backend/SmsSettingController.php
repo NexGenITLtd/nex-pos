@@ -26,12 +26,12 @@ class SmsSettingController extends Controller
     {
         $validated = $request->validate([
             'api_key' => 'required|string',
-            'sender_id' => 'required|string',
+            // 'sender_id' => 'required|string',
             'message' => 'nullable|string',
-            'user_email' => 'required|email',
+            // 'user_email' => 'required|email',
             'store_id' => 'nullable|integer',
-            'balance' => 'required|numeric|min:0',
-            'sms_rate' => 'required|numeric|min:0',
+            // 'balance' => 'required|numeric|min:0',
+            // 'sms_rate' => 'required|numeric|min:0',
         ]);
 
         SmsSetting::create($validated);
@@ -49,12 +49,12 @@ class SmsSettingController extends Controller
     {
         $validated = $request->validate([
             'api_key' => 'required|string',
-            'sender_id' => 'required|string',
+            // 'sender_id' => 'required|string',
             'message' => 'nullable|string',
-            'user_email' => 'required|email',
+            // 'user_email' => 'required|email',
             'store_id' => 'nullable|integer',
-            'balance' => 'required|numeric|min:0',
-            'sms_rate' => 'required|numeric|min:0',
+            // 'balance' => 'required|numeric|min:0',
+            // 'sms_rate' => 'required|numeric|min:0',
         ]);
 
         $smsSetting->update($validated);

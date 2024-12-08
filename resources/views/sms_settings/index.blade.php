@@ -54,29 +54,29 @@
                     <thead>
                         <tr>
                             <th>ID</th>
-                            <th>Store ID</th>
+                            <th>Store</th>
                             <th>API Key</th>
-                            <th>Sender ID</th>
-                            <th>User Email</th>
+                            <!-- <th>Sender ID</th> -->
+                            <!-- <th>User Email</th> -->
                             <th>Balance</th>
                             <th>SMS Rate</th>
                             <th>SMS Count</th>
-                            <th>Actions</th>
+                            <!-- <th>Actions</th> -->
                         </tr>
                     </thead>
                     <tbody>
                         @foreach($smsSettings as $smsSetting)
                             <tr>
                                 <td>{{ $smsSetting->id }}</td>
-                                <td>{{ $smsSetting->store_id }}</td>
+                                <td>{{ $smsSetting->store->name??'No Store Setup' }}</td>
                                 <td>{{ $smsSetting->api_key }}</td>
-                                <td>{{ $smsSetting->sender_id }}</td>
-                                <td>{{ $smsSetting->user_email }}</td>
+                                <!-- <td>{{ $smsSetting->sender_id }}</td> -->
+                                <!-- <td>{{ $smsSetting->user_email }}</td> -->
                                 <td>{{ $smsSetting->balance }}</td>
                                 <td>{{ $smsSetting->sms_rate }}</td>
                                 <td>{{ $smsSetting->sms_count }}</td>
                                 <td>
-                                    <a href="{{ route('sms-settings.edit', $smsSetting->id) }}" class="btn btn-warning btn-sm">Edit</a>
+                                    <!-- <a href="{{ route('sms-settings.edit', $smsSetting->id) }}" class="btn btn-warning btn-sm">Edit</a> -->
                                     {{-- Add delete functionality if necessary --}}
                                 </td>
                             </tr>

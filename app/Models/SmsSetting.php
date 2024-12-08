@@ -13,7 +13,9 @@ class SmsSetting extends Model
         'store_id', 'api_key', 'sender_id', 'message', 'user_email',
         'balance', 'sms_rate', 'sms_count', 'api_url',
     ];
-
+    public function store(){
+        return $this->belongsTo(Store::class);
+    }
     /**
      * Calculate SMS parts based on the message length.
      */

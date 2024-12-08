@@ -57,30 +57,34 @@
                         <label for="api_key" class="form-label">API Key</label>
                         <input type="text" class="form-control" id="api_key" name="api_key" value="{{ old('api_key') }}" required>
                     </div>
-                    <div class="mb-3">
+                    <!-- <div class="mb-3">
+                        <label for="api_url" class="form-label">API URL</label>
+                        <input type="text" class="form-control" id="api_url" name="api_url" value="{{ old('api_url') }}" required>
+                    </div> -->
+                    <!-- <div class="mb-3">
                         <label for="sender_id" class="form-label">Sender ID</label>
                         <input type="text" class="form-control" id="sender_id" name="sender_id" value="{{ old('sender_id') }}" required>
-                    </div>
+                    </div> -->
                     <div class="mb-3">
                         <label for="message" class="form-label">Message</label>
                         <textarea class="form-control" id="message" name="message" rows="3">{{ old('message') }}</textarea>
                     </div>
-                    <div class="mb-3">
+                    <!-- <div class="mb-3">
                         <label for="user_email" class="form-label">User Email</label>
                         <input type="email" class="form-control" id="user_email" name="user_email" value="{{ old('user_email') }}" required>
-                    </div>
-                    <div class="mb-3">
+                    </div> -->
+                    <!-- <div class="mb-3">
                         <label for="balance" class="form-label">Balance</label>
                         <input type="number" step="0.01" class="form-control" id="balance" name="balance" value="{{ old('balance') }}" required>
-                    </div>
-                    <div class="mb-3">
+                    </div> -->
+                    <!-- <div class="mb-3">
                         <label for="sms_rate" class="form-label">SMS Rate</label>
                         <input type="number" step="0.01" class="form-control" id="sms_rate" name="sms_rate" value="{{ old('sms_rate') }}" required>
-                    </div>
-                    <div class="mb-3">
+                    </div> -->
+                    <!-- <div class="mb-3">
                         <label for="sms_count" class="form-label">SMS Count</label>
                         <input type="number" class="form-control" id="sms_count" name="sms_count" value="{{ old('sms_count') }}" required>
-                    </div>
+                    </div> -->
                     <button type="submit" class="btn btn-primary">Save</button>
                 </form>
                 </div>
