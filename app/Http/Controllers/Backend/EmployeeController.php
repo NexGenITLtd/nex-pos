@@ -20,10 +20,16 @@ class EmployeeController extends Controller
     public function __construct()
     {
         $this->middleware('auth');
-        $this->middleware('permission:view employee')->only('index','show');
+        $this->middleware('permission:view employee')->only('index');
         $this->middleware('permission:create employee')->only('create', 'store');
         $this->middleware('permission:update employee')->only('edit', 'update');
         $this->middleware('permission:delete employee')->only('destroy');
+    }
+
+
+    public function show($id)
+    {
+        return $employee = Employee::findOrFail($id);
     }
 
     public function index()

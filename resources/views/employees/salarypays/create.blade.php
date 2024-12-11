@@ -30,6 +30,7 @@
 <section class="content">
   <form action="{{route('salarypays.store')}}" method="post" enctype="multipart/form-data">
     @csrf
+    @method('POST')
     <div class="row">
       <div class="col-md-12">
         <div class="card card-primary">
@@ -40,6 +41,7 @@
             </div>
           </div>
           <div class="card-body">
+          @include('partials.alerts')
             <div class="row">
               <div class="col-md-4 form-group">
                 <label for="employee_id">Employee</label>

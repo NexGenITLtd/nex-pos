@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Backend;
 use App\Http\Controllers\Controller;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use App\Models\Transaction;
 use App\Models\Store;
 use App\Models\Supplier;
 use App\Models\Rack;
@@ -16,6 +17,7 @@ use App\Models\Product;
 use App\Models\CustomerPayment;
 use App\Models\Cart;
 use App\Models\StockIn;
+use App\Models\BankAccount;
 use App\Models\SmsSetting;
 use Illuminate\Support\Facades\DB;
 use PDF;
@@ -157,6 +159,8 @@ class InvoiceController extends Controller
                 $this->processPayment(Auth::user()->store_id, $invoice->id, 'cash_payment', $request->cash_payment, $request->cash_account_no_id);
                 $this->processPayment(Auth::user()->store_id, $invoice->id, 'card_payment', $request->card_payment, $request->card_account_no_id, $request->card_number, $request->card_type);
                 $this->processPayment(Auth::user()->store_id, $invoice->id, 'mobile_payment', $request->mobile_payment, $request->mobile_account_no_id, $request->sender_no, $request->trx_no);
+
+				
             });
 
 			// If send_sms is checked, send the SMS
@@ -186,19 +190,42 @@ class InvoiceController extends Controller
     }
     
     private function processPayment($store_id, $invoice_id, $payment_type, $amount, $account_id, $account_no = null, $trx_note = null)
-    {
-        if ($amount > 0) {
-            $customer_payment = new CustomerPayment;
-            $customer_payment->store_id = $store_id;
-            $customer_payment->invoice_id = $invoice_id;
-            $customer_payment->payment_type = $payment_type;
-            $customer_payment->amount = $amount;
-            $customer_payment->bank_account_id = $account_id;
-            $customer_payment->payment_from_account_no = $account_no;
-            $customer_payment->payment_trx_note = $trx_note;
-            $customer_payment->save();
-        }
-    }
+	{
+		if ($amount > 0) {
+			// Validate the bank account
+			$bankAccount = BankAccount::find($account_id);
+			if (!$bankAccount) {
+				throw new \Exception("Bank account not found for ID: $account_id");
+			}
+
+			// Record the customer payment
+			$customer_payment = new CustomerPayment();
+			$customer_payment->store_id = $store_id;
+			$customer_payment->invoice_id = $invoice_id;
+			$customer_payment->payment_type = $payment_type;
+			$customer_payment->amount = $amount;
+			$customer_payment->bank_account_id = $account_id;
+			$customer_payment->payment_from_account_no = $account_no;
+			$customer_payment->payment_trx_note = $trx_note;
+			$customer_payment->save();
+
+			// Update the bank account's current balance
+			$bankAccount->current_balance += $amount; // Assuming this is a credit
+			$bankAccount->save();
+
+			// Record the transaction
+			Transaction::create([
+				'store_id' => $store_id,
+				'bank_account_id' => $account_id,
+				'debit' => 0, // No debit for this transaction
+				'credit' => $amount, // Credit the bank account
+				'balance' => $bankAccount->current_balance, // Use the updated current balance
+				'created_by' => auth()->id(),
+				'note' => "Invoice payment for Invoice #$invoice_id",
+			]);
+		}
+	}
+
 
 	public function edit($id)
 	{
@@ -484,71 +511,118 @@ class InvoiceController extends Controller
 
 	public function update(Request $request, $id)
 	{
-			DB::transaction(function () use ($request, $id) {
-			    if ($request->customer_id == '' || $request->customer_id == 0) {
-			        $customer = new Customer;
-			        $customer->name = $request->name;
-			        $customer->phone = $request->phone;
-			        if($request->make_member=='Member'){
-			        	$customer->discount = $request->discount;
-			        	$customer->membership = $request->make_member;
-			        }
-			        $customer->save();
-			        $customer_id = $customer->id;
-			    } else {
-			        $customer_id = $request->customer_id;
-			        $customer = Customer::find($customer_id);
-			        $customer->name = $request->name;
-			        $customer->phone = $request->phone;
-			        if($request->make_member=='Member'){
-			        	$customer->discount = $request->discount;
-			        	$customer->membership = $request->make_member;
-			        }
-			        $customer->save();
-			    }
+		DB::transaction(function () use ($request, $id) {
+			// Handle customer creation or update
+			$customer_id = $request->customer_id;
+			if (empty($customer_id) || $customer_id == 0) {
+				$customer = new Customer;
+				$customer->name = $request->name;
+				$customer->phone = $request->phone;
+				if ($request->make_member == 'Member') {
+					$customer->discount = $request->discount;
+					$customer->membership = $request->make_member;
+				}
+				$customer->save();
+				$customer_id = $customer->id;
+			} else {
+				$customer = Customer::findOrFail($customer_id);
+				$customer->name = $request->name;
+				$customer->phone = $request->phone;
+				if ($request->make_member == 'Member') {
+					$customer->discount = $request->discount;
+					$customer->membership = $request->make_member;
+				}
+				$customer->save();
+			}
 
-			    $due = ($request->total_payable_amount - $request->total_payments);
-			    $invoice = Invoice::findOrFail($id);
-			    $invoice->customer_id = $customer_id;
-			    $invoice->total_bill = $request->total_payable_amount;
-			    $invoice->product_return = $request->product_return;
-			    $invoice->paid_amount = $request->total_payments;
-			    $invoice->due_amount = ($due > 0) ? $due : 0;
-			    $invoice->discount = $request->discount;
-			    $invoice->less_amount = $request->less;
-			    $invoice->sell_person_id = $request->sale_person_id;
-			    $invoice->save();
+			// Update invoice details
+			$invoice = Invoice::findOrFail($id);
+			$previousPaidAmount = $invoice->paid_amount; // Previous payment amount for transaction adjustment
+			$newPaidAmount = $request->total_payments;
+			$due = $request->total_payable_amount - $newPaidAmount;
 
-			    // Helper function to process payment
-			    function processCustomerPayment($invoice_id, $payment_type, $amount, $account_no_id, $from_account_no = null, $trx_note = null) {
-			        $customer_payment = CustomerPayment::where('invoice_id', $invoice_id)->where('payment_type', $payment_type)->first();
-			        if (!$customer_payment) {
-			            $customer_payment = new CustomerPayment;
-			            $customer_payment->store_id = Auth::user()->store_id;
-			        }
-			        $customer_payment->invoice_id = $invoice_id;
-			        $customer_payment->payment_type = $payment_type;
-			        $customer_payment->amount = $amount;
-			        $customer_payment->bank_account_id = $account_no_id;
-			        $customer_payment->payment_from_account_no = $from_account_no;
-			        $customer_payment->payment_trx_note = $trx_note;
-			        $customer_payment->save();
-			    }
+			$invoice->customer_id = $customer_id;
+			$invoice->total_bill = $request->total_payable_amount;
+			$invoice->product_return = $request->product_return;
+			$invoice->paid_amount = $newPaidAmount;
+			$invoice->due_amount = max($due, 0);
+			$invoice->discount = $request->discount;
+			$invoice->less_amount = $request->less;
+			$invoice->sell_person_id = $request->sale_person_id;
+			$invoice->save();
 
-			    if ($request->cash_payment > 0) {
-			        processCustomerPayment($invoice->id, 'cash_payment', $request->cash_payment, $request->cash_account_no_id);
-			    }
-			    if ($request->card_payment > 0) {
-			        processCustomerPayment($invoice->id, 'card_payment', $request->card_payment, $request->card_account_no_id, $request->card_number, $request->card_type);
-			    }
-			    if ($request->mobile_payment > 0) {
-			        processCustomerPayment($invoice->id, 'mobile_payment', $request->mobile_payment, $request->mobile_account_no_id, $request->sender_no, $request->trx_no);
-			    }
-			});
+			// Helper function to process customer payments and update transactions
+			function processCustomerPayment($invoice_id, $payment_type, $amount, $account_no_id, $store_id, $user_id, $from_account_no = null, $trx_note = null)
+			{
+				$customer_payment = CustomerPayment::where('invoice_id', $invoice_id)->where('payment_type', $payment_type)->first();
+				if (!$customer_payment) {
+					$customer_payment = new CustomerPayment;
+					$customer_payment->store_id = $store_id;
+				}
+				$previousAmount = $customer_payment->amount ?? 0;
 
-	        return $id;
-            
+				$customer_payment->invoice_id = $invoice_id;
+				$customer_payment->payment_type = $payment_type;
+				$customer_payment->amount = $amount;
+				$customer_payment->bank_account_id = $account_no_id;
+				$customer_payment->payment_from_account_no = $from_account_no;
+				$customer_payment->payment_trx_note = $trx_note;
+				$customer_payment->save();
+
+				// Update the transaction for the payment difference
+				$difference = $amount - $previousAmount;
+				if ($difference != 0) {
+					Transaction::createTransaction(
+						$store_id,
+						$account_no_id,
+						$difference < 0 ? abs($difference) : 0, // Debit for reductions
+						$difference > 0 ? $difference : 0, // Credit for additions
+						$user_id,
+						"Updated Payment: Invoice ID #$invoice_id"
+					);
+				}
+			}
+
+			// Handle different payment methods
+			if ($request->cash_payment > 0) {
+				processCustomerPayment(
+					$invoice->id,
+					'cash_payment',
+					$request->cash_payment,
+					$request->cash_account_no_id,
+					Auth::user()->store_id,
+					Auth::id()
+				);
+			}
+			if ($request->card_payment > 0) {
+				processCustomerPayment(
+					$invoice->id,
+					'card_payment',
+					$request->card_payment,
+					$request->card_account_no_id,
+					Auth::user()->store_id,
+					Auth::id(),
+					$request->card_number,
+					$request->card_type
+				);
+			}
+			if ($request->mobile_payment > 0) {
+				processCustomerPayment(
+					$invoice->id,
+					'mobile_payment',
+					$request->mobile_payment,
+					$request->mobile_account_no_id,
+					Auth::user()->store_id,
+					Auth::id(),
+					$request->sender_no,
+					$request->trx_no
+				);
+			}
+		});
+
+		return $id;
 	}
+
 
     public function index(Request $request)
 	{
@@ -717,17 +791,6 @@ class InvoiceController extends Controller
 	    return view('invoices.single-invoice2', compact('invoice'));
 	}
 
-	// public function downloadInvoicePDF($id)
-    // {
-    //     $invoice = Invoice::with(['customer', 'sellProducts', 'returnSellProducts', 'payments', 'manager', 'sell_person'])->findOrFail($id);
-        
-    //     // Generate PDF view (invoices.pdf is a Blade view file)
-    //     $pdf = PDF::loadView('invoices.pdf.single_invoice', compact('invoice'));
-
-    //     // Return the generated PDF for download
-    //     return $pdf->download('invoice_'.$id.'.pdf');
-    // }
-
 	public function downloadInvoicePDF($id)
 	{
 		$invoice = Invoice::with(['store', 'customer', 'sellProducts', 'returnSellProducts', 'payments'])->findOrFail($id);
@@ -736,7 +799,6 @@ class InvoiceController extends Controller
 		return $pdf->download('invoice_' . $invoice->id . '.pdf');
 	}
 	
-    
     public function jsonInvoice($id)
 	{
 	    $invoice = Invoice::with(['customer', 'sellProducts', 'returnSellProducts', 'payments', 'manager', 'sell_person'])->find($id);
@@ -749,20 +811,46 @@ class InvoiceController extends Controller
 	}
 
     public function destroy($id)
-    {
-        if (!empty($id)) {
-			Invoice::findOrFail($id)->delete();
-			CustomerPayment::where('invoice_id', $id)->delete();
-			SellProduct::where('invoice_id', $id)->delete();
-			ReturnSellProduct::where('invoice_id', $id)->delete();
+	{
+		if (!empty($id)) {
+			DB::transaction(function () use ($id) {
+				$invoice = Invoice::findOrFail($id);
+
+				// Capture relevant details for the transaction
+				$store_id = $invoice->store_id;
+				$user_id = auth()->id();
+
+				$customerPayments = CustomerPayment::where('invoice_id', $id)->get();
+
+				// Delete associated records
+				CustomerPayment::where('invoice_id', $id)->delete();
+				SellProduct::where('invoice_id', $id)->delete();
+				ReturnSellProduct::where('invoice_id', $id)->delete();
+				$invoice->delete();
+
+				// Record the transaction for the deletion
+				if (count($customerPayments ) > 0) {
+					foreach($customerPayments as $customerPayment){
+						Transaction::createTransaction(
+							$store_id,
+							$customerPayment->bank_account_id, // Assuming the invoice has a reference to the bank account
+							$customerPayment->amount, // Debit the amount paid from the bank account
+							0, // No credit
+							$user_id,
+							"Invoice Deleted: Invoice ID #$id"
+						);
+					}
+				}
+			});
 
 			return redirect()->back()->with('flash_success', '
-			    <script>
-			    toaster.success("Invoice successfully deleted");
-			    </script>
+				<script>
+				toaster.success("Invoice successfully deleted");
+				</script>
 			');
 		}
-    }
+	}
+
 
     public function invoice_show_for_print($id) // for print
 	{

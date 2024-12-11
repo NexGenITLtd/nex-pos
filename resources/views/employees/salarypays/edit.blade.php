@@ -31,13 +31,14 @@
 <section class="content">
   <form action="{{route('salarypays.update',$salary_pay->id)}}" method="post" enctype="multipart/form-data">
     @csrf
+    @method('PUT')
     <div class="row">
       <div class="col-md-12">
         <div class="card card-primary">
           <div class="card-header">
             <h3 class="card-title">Salary pay information edit</h3>
             <div class="card-tools">
-              <a href="{{route('salarypays.update')}}" class="btn btn-success float-right"><i class="fa fa-angle-double-left"></i> Back</a>
+              <a href="{{route('salarypays.index')}}" class="btn btn-success float-right"><i class="fa fa-angle-double-left"></i> Back</a>
             </div>
           </div>
           <div class="card-body">

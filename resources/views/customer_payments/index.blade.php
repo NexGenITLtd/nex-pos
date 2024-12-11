@@ -89,11 +89,11 @@
 
 		                        <td>
 		                        	<span class="no-print">
-			                            <a href="{{ route('customer-payments.edit', $payment->id) }}" class="btn btn-warning btn-delete btn-sm">Edit</a>
+			                            <a href="{{ route('customer-payments.edit', $payment->id) }}" class="btn btn-warning btn-sm">Edit</a>
 			                            <form action="{{ route('customer-payments.destroy', $payment->id) }}" method="POST" style="display:inline;">
 			                                @csrf
 			                                @method('DELETE')
-			                                <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+			                                <button type="submit" class="btn btn-danger  btn-delete btn-sm">Delete</button>
 			                            </form>
 			                        </span>
 		                        </td>

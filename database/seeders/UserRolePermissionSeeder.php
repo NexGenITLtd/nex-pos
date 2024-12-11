@@ -37,6 +37,7 @@ class UserRolePermissionSeeder extends Seeder
         }
 
         // Explicitly create the "view permission" if needed
+
         Permission::firstOrCreate(['name' => 'view permission', 'guard_name' => 'web']);
         Permission::firstOrCreate(['name' => 'create permission', 'guard_name' => 'web']);
         Permission::firstOrCreate(['name' => 'update permission', 'guard_name' => 'web']);
@@ -52,6 +53,7 @@ class UserRolePermissionSeeder extends Seeder
         Permission::firstOrCreate(['name' => 'update self-profile', 'guard_name' => 'web']);
         Permission::firstOrCreate(['name' => 'update self-password', 'guard_name' => 'web']);
         // view profit-report
+        Permission::firstOrCreate(['name' => 'show total-report', 'guard_name' => 'web']);
         Permission::firstOrCreate(['name' => 'view profit-report', 'guard_name' => 'web']);
 
         Permission::firstOrCreate(['name' => 'view supplier-report', 'guard_name' => 'web']);

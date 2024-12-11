@@ -309,11 +309,12 @@
 			        <div class="card card-primary">
 						<div class="card-header">
 							<h3 class="card-title">
-							@if ($smsSetting->balance < $smsSetting->sms_rate)
+							@if (isset($smsSetting->balance) && isset($smsSetting->sms_rate) && $smsSetting->balance < $smsSetting->sms_rate)
 								<div class="alert alert-warning">
 									Insufficient balance to send SMS. Please recharge your account.
 								</div>
 							@endif
+
 
 							<div class="form-check mb-3">
 								<input class="form-check-input" type="checkbox" id="send_sms" v-model="send_sms" name="send_sms" value="1">

@@ -5,6 +5,8 @@ namespace App\Http\Controllers\Backend;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\SmsSetting;
+use App\Http\Requests\SmsSettingRequest;
+use App\Models\Store;
 
 class SmsSettingController extends Controller
 {
@@ -18,47 +20,32 @@ class SmsSettingController extends Controller
     // Show form to create a new setting
     public function create()
     {
-        return view('sms_settings.create');
+        $stores = Store::get();
+        return view('sms_settings.create', compact('stores'));
     }
 
     // Store a new setting
-    public function store(Request $request)
+    public function store(SmsSettingRequest $request)
     {
-        $validated = $request->validate([
-            'api_key' => 'required|string',
-            // 'sender_id' => 'required|string',
-            'message' => 'nullable|string',
-            // 'user_email' => 'required|email',
-            'store_id' => 'nullable|integer',
-            // 'balance' => 'required|numeric|min:0',
-            // 'sms_rate' => 'required|numeric|min:0',
-        ]);
-
-        SmsSetting::create($validated);
+        SmsSetting::create($request->validated());
         return redirect()->route('sms-settings.index')->with('success', 'SMS Setting created successfully.');
     }
 
     // Show edit form
     public function edit(SmsSetting $smsSetting)
     {
-        return view('sms_settings.edit', compact('smsSetting'));
+        $stores = Store::get();
+        return view('sms_settings.edit', compact('smsSetting','stores'));
     }
 
     // Update an existing setting
-    public function update(Request $request, SmsSetting $smsSetting)
+    public function update(SmsSettingRequest $request, $id)
     {
-        $validated = $request->validate([
-            'api_key' => 'required|string',
-            // 'sender_id' => 'required|string',
-            'message' => 'nullable|string',
-            // 'user_email' => 'required|email',
-            'store_id' => 'nullable|integer',
-            // 'balance' => 'required|numeric|min:0',
-            // 'sms_rate' => 'required|numeric|min:0',
-        ]);
+        $smsSetting = SmsSetting::findOrFail($id);
 
-        $smsSetting->update($validated);
-        return redirect()->route('sms-settings.index')->with('success', 'SMS Setting updated successfully.');
+        $smsSetting->update($request->validated());
+
+        return redirect()->back()->with('success', 'SMS settings updated successfully.');
     }
 
     // Delete a setting

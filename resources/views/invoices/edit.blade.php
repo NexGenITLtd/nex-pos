@@ -56,6 +56,7 @@
 <section class="content">
   <form action="{{ route('invoices.update', $invoice->id) }}" method="post" enctype="multipart/form-data">
     @csrf
+	@method('PUT')
     <div class="row">
 	    <div class="col-md-8">
 	        <div class="card card-primary d-none">
@@ -799,11 +800,11 @@
                     return; // Exit on first error
                 }
             }
-
             // If everything is valid, proceed with form submission
             if (valid) {
                 // Prepare the data for submission
                 const formData = {
+					_token: "{{ csrf_token() }}",
                     sale_person_id: this.sale_person_id,
                     customer_id: this.customer_id,
                     name: this.name,
@@ -852,7 +853,7 @@
                     // console.log('Form submitted successfully:', response.data);
                     
 	                toastr.success('Form submitted successfully');
-	                window.location.reload();
+	                // window.location.reload();
                     // alert('Form submitted successfully!');
                     // Optionally reset the form fields after submission
                     // this.resetForm();

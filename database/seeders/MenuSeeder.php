@@ -18,7 +18,7 @@ class MenuSeeder extends Seeder
     public function run(): void
     {
         $menuItems = [
-            ['name' => 'Dashboard', 'route' => 'dashboard', 'icon' => 'fas fa-house'],
+            ['name' => 'Dashboard', 'route' => 'dashboard', 'icon' => 'fas fa-home'],
             ['name' => 'New Sale', 'route' => 'invoices.create', 'icon' => 'fas fa-cart-plus'],
             ['name' => 'Invoices', 'route' => 'invoices.index', 'icon' => 'fas fa-file-invoice-dollar'],
             ['name' => 'Reports', 'route' => 'reports.index', 'icon' => 'fas fa-chart-line'],
@@ -32,8 +32,8 @@ class MenuSeeder extends Seeder
             ['name' => 'Return Products', 'route' => 'return-sell-products.index', 'icon' => 'fas fa-undo-alt'],
             ['name' => 'Stores', 'route' => 'stores.index', 'icon' => 'fas fa-store-alt'],
             ['name' => 'Suppliers', 'route' => 'suppliers.index', 'icon' => 'fas fa-truck'],
-            ['name' => 'Supplier Payments', 'route' => 'customer-payments.index', 'icon' => 'fas fa-credit-card'],
-            ['name' => 'Supplier Payment Alerts', 'route' => 'customer-payments.index', 'icon' => 'fas fa-bell'],
+            ['name' => 'Supplier Payments', 'route' => 'supplier-payments.index', 'icon' => 'fas fa-credit-card'],
+            ['name' => 'Supplier Payment Alerts', 'route' => 'supplier-payment-alerts.index', 'icon' => 'fas fa-bell'],
             ['name' => 'Customers', 'route' => 'customers.index', 'icon' => 'fas fa-users'],
             ['name' => 'Customer Payments', 'route' => 'customer-payments.index', 'icon' => 'fas fa-hand-holding-usd'],
             ['name' => 'Categories', 'route' => 'categories.index', 'icon' => 'fas fa-th-large'],
@@ -51,6 +51,10 @@ class MenuSeeder extends Seeder
             ['name' => 'Cards', 'route' => 'cards.index', 'icon' => 'fas fa-credit-card'],
             ['name' => 'Expenses', 'route' => 'expenses.index', 'icon' => 'fas fa-file-invoice-dollar'],
             ['name' => 'Assets', 'route' => 'assets.index', 'icon' => 'fas fa-warehouse'],
+            ['name' => 'Sms Settings', 'route' => 'sms-settings.index', 'icon' => 'fas fa-sms'],
+            ['name' => 'Owner Transactions', 'route' => 'owner-deposits.index', 'icon' => 'fas fa-wallet'],
+            ['name' => 'Transactions', 'route' => 'transactions.index', 'icon' => 'fas fa-exchange-alt'],
+            
         ];
 
         foreach ($menuItems as $item) {

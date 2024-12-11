@@ -54,8 +54,8 @@
             <i class="far fa-bell"></i>
             <span class="badge badge-warning navbar-badge">{{ auth()->user()->unreadNotifications->count() }}</span>
         </a>
-        <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
         @if(auth()->user()->unreadNotifications->count()>0)
+        <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
             <span class="dropdown-item dropdown-header">{{ auth()->user()->unreadNotifications->count() }} Notifications</span>
             <div class="dropdown-divider"></div>
             
@@ -71,8 +71,8 @@
             
             <div class="dropdown-divider"></div>
             <a href="{{ route('notifications.index') }}" class="dropdown-item dropdown-footer">See All Notifications</a>
-            @endif
         </div>
+        @endif
     </li>
     @endcan
     <li class="nav-item">

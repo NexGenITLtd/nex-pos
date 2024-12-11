@@ -54,6 +54,7 @@
                             <th>Account No</th>
                             <th>Account Type</th>
                             <th>Initial Balance</th>
+                            <th>Current Balance</th>
                             <th>Store</th>
                             <th class="text-center">Action</th>
                         </tr>
@@ -66,10 +67,11 @@
                                 <td>{{ $account->account_no }}</td>
                                 <td>{{ $account->account_type }}</td>
                                 <td>{{ $account->initial_balance }}</td>
+                                <td>{{ $account->current_balance }}</td>
                                 <td>{{ $account->store->name }}</td>
                                 <td class="text-center">
                                     <a href="{{ route('accounts.edit', $account->id) }}" class="btn btn-primary btn-sm">Edit</a>
-                                    <form action="{{ route('accounts.destroy', $account->id) }}" method="POST" style="display:inline;">
+                                    <form class="d-none" action="{{ route('accounts.destroy', $account->id) }}" method="POST" style="display:inline;">
                                         @csrf
                                         @method('DELETE')
                                         <button type="submit" class="btn btn-danger btn-delete btn-sm">Delete</button>

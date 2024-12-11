@@ -80,12 +80,12 @@
                                         <td>Total Sales</td>
                                         <td class="text-right"><span>{{ $dailyreport->total_sales }} {{ $website_info->currency }}</span></td>
                                     </tr>
-                                    @if(Auth::user()->role == 'admin')
+                                    @can('show profit')
                                     <tr>
                                         <td>Total Profit</td>
                                         <td class="text-right"><span>{{ $dailyreport->total_profit }} {{ $website_info->currency }}</span></td>
                                     </tr>
-                                    @endif
+                                    @endcan
                                     <!-- Cash Management Section -->
                                     <tr><th colspan="2" class="text-center bg-warning text-dark">Cash Management</th></tr>
                                     <tr>
@@ -103,12 +103,12 @@
                                         <td>Total Sell Return</td>
                                         <td class="text-right"><span>{{ $dailyreport->total_return_sell }} {{ $website_info->currency }}</span></td>
                                     </tr>
-                                    @if(Auth::user()->role == 'admin')
+                                    @can('show profit')
                                     <tr>
                                         <td>Total Purchase Price</td>
                                         <td class="text-right"><span>{{ $dailyreport->total_purchase_price }} {{ $website_info->currency }}</span></td>
                                     </tr>
-                                    @endif
+                                    @endcan
                                     <!-- Expense and Payments -->
                                     <tr><th colspan="2" class="text-center bg-danger text-white">Expenses and Payments</th></tr>
                                     <tr>
@@ -145,12 +145,12 @@
                                         <td>Total Due</td>
                                         <td class="text-right"><span>{{ $dailyreport->total_due }} {{ $website_info->currency }}</span></td>
                                     </tr>
-                                    @if(Auth::user()->role == 'admin')
+                                    @can('show profit')
                                     <tr>
                                         <td>Net Profit</td>
                                         <td class="text-right"><span>{{ $dailyreport->net_profit }} {{ $website_info->currency }}</span></td>
                                     </tr>
-                                    @endif
+                                    @endcan
                                     <!-- Cash in Hand for Next Day Section -->
                                     <tr><th colspan="2" class="text-center bg-info text-white">Cash in Hand</th></tr>
                                     <tr>

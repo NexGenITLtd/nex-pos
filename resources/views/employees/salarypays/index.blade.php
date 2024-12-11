@@ -79,7 +79,12 @@
                       <td>{{ $salary_pay->paid_date }}</td>
                       <td>
                         <a href="{{ route('salarypays.edit', $salary_pay->id) }}" class="btn btn-primary btn-sm">Edit</a>
-                        <a href="{{ route('salarypays.destroy', $salary_pay->id) }}" class="btn btn-danger btn-sm">Delete</a>
+                        <form action="{{ route('salarypays.destroy', $salary_pay->id) }}" method="POST" style="display:inline;">
+                          @csrf
+                          @method('DELETE')
+                          <button type="submit" class="btn btn-danger btn-delete btn-sm">Delete</button>
+                      </form>
+
 
                       </td>
                     </tr>

@@ -29,7 +29,7 @@
 
 <!-- Main content -->
 <section class="content">
-<div class="container">
+<div class="container-fluid">
     <div class="row">
         <div class="col-md-12">
             <div class="card">
@@ -38,58 +38,96 @@
                     <div class="card-tools"></div>
                 </div>
                 <div class="card-body">
+                    @include('partials.alerts')
 
-                @if($errors->any())
-                    <div class="alert alert-danger">
-                        <ul>
-                            @foreach ($errors->all() as $error)
-                                <li>{{ $error }}</li>
-                            @endforeach
-                        </ul>
-                    </div>
-                @endif
+                    <form action="{{ route('sms-settings.update', $smsSetting->id) }}" method="POST">
+                        @csrf
+                        @method('PUT')
+                        <div class="row">
+                            <div class="col-md-4 form-group">
+                                <label for="store_id">Store <span class="text-danger">*</span></label>
+                                <select id="store_id" name="store_id" class="form-control @error('store_id') is-invalid @enderror">
+                                    <option value="">Select Store</option>
+                                    @foreach($stores as $store)
+                                        <option value="{{ $store->id }}" {{ old('store_id', $smsSetting->store_id) == $store->id ? 'selected' : '' }}>
+                                            {{ $store->name }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                                @error('store_id')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
+                            </div>
+                            
+                            <div class="col-md-4 form-group">
+                                <label for="api_key">API Key <span class="text-danger">*</span></label>
+                                <input type="text" id="api_key" name="api_key" class="form-control @error('api_key') is-invalid @enderror" value="{{ old('api_key', $smsSetting->api_key) }}" required>
+                                @error('api_key')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
+                            </div>
+                            
+                            <div class="col-md-4 form-group">
+                                <label for="api_url">API URL <span class="text-danger">*</span></label>
+                                <input type="text" id="api_url" name="api_url" class="form-control @error('api_url') is-invalid @enderror" value="{{ old('api_url', $smsSetting->api_url) }}" required>
+                                @error('api_url')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
+                            </div>
 
-                <form action="{{ route('sms-settings.update', $smsSetting->id) }}" method="POST">
-                    @csrf
-                    @method('PUT')
-                    <div class="mb-3">
-                        <label for="store_id" class="form-label">Store ID</label>
-                        <input type="number" class="form-control" id="store_id" name="store_id" value="{{ old('store_id', $smsSetting->store_id) }}">
-                    </div>
-                    <div class="mb-3">
-                        <label for="api_key" class="form-label">API Key</label>
-                        <input type="text" class="form-control" id="api_key" name="api_key" value="{{ old('api_key', $smsSetting->api_key) }}" required>
-                    </div>
-                    <div class="mb-3">
-                        <label for="api_url" class="form-label">API URL</label>
-                        <input type="text" class="form-control" id="api_url" name="api_url" value="{{ old('api_url', $smsSetting->api_url) }}" required>
-                    </div>
-                    <!-- <div class="mb-3">
-                        <label for="sender_id" class="form-label">Sender ID</label>
-                        <input type="text" class="form-control" id="sender_id" name="sender_id" value="{{ old('sender_id', $smsSetting->sender_id) }}" required>
-                    </div> -->
-                    <div class="mb-3">
-                        <label for="message" class="form-label">Message</label>
-                        <textarea class="form-control" id="message" name="message" rows="3">{{ old('message', $smsSetting->message) }}</textarea>
-                    </div>
-                    <!-- <div class="mb-3">
-                        <label for="user_email" class="form-label">User Email</label>
-                        <input type="email" class="form-control" id="user_email" name="user_email" value="{{ old('user_email', $smsSetting->user_email) }}" required>
-                    </div> -->
-                    <!-- <div class="mb-3">
-                        <label for="balance" class="form-label">Balance</label>
-                        <input type="number" step="0.01" class="form-control" id="balance" name="balance" value="{{ old('balance', $smsSetting->balance) }}" required>
-                    </div> -->
-                    <!-- <div class="mb-3">
-                        <label for="sms_rate" class="form-label">SMS Rate</label>
-                        <input type="number" step="0.01" class="form-control" id="sms_rate" name="sms_rate" value="{{ old('sms_rate', $smsSetting->sms_rate) }}" required>
-                    </div> -->
-                    <!-- <div class="mb-3">
-                        <label for="sms_count" class="form-label">SMS Count</label>
-                        <input type="number" class="form-control" id="sms_count" name="sms_count" value="{{ old('sms_count', $smsSetting->sms_count) }}" required>
-                    </div> -->
-                    <button type="submit" class="btn btn-primary">Update</button>
-                </form>
+                            <div class="col-md-4 form-group">
+                                <label for="sender_id">Sender ID <span class="text-danger">*</span></label>
+                                <input type="text" id="sender_id" name="sender_id" class="form-control @error('sender_id') is-invalid @enderror" value="{{ old('sender_id', $smsSetting->sender_id) }}" required>
+                                @error('sender_id')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
+                            </div>
+                            
+                            <div class="col-md-4 form-group">
+                                <label for="message">Message</label>
+                                <textarea id="message" name="message" class="form-control @error('message') is-invalid @enderror" rows="3">{{ old('message', $smsSetting->message) }}</textarea>
+                                @error('message')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
+                            </div>
+                            
+                            <div class="col-md-4 form-group">
+                                <label for="user_email">User Email <span class="text-danger">*</span></label>
+                                <input type="email" id="user_email" name="user_email" class="form-control @error('user_email') is-invalid @enderror" value="{{ old('user_email', $smsSetting->user_email) }}" required>
+                                @error('user_email')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
+                            </div>
+                            
+                            <div class="col-md-4 form-group">
+                                <label for="balance">Balance <span class="text-danger">*</span></label>
+                                <input type="number" step="0.01" id="balance" name="balance" class="form-control @error('balance') is-invalid @enderror" value="{{ old('balance', $smsSetting->balance) }}" required>
+                                @error('balance')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
+                            </div>
+                            
+                            <div class="col-md-4 form-group">
+                                <label for="sms_rate">SMS Rate <span class="text-danger">*</span></label>
+                                <input type="number" step="0.01" id="sms_rate" name="sms_rate" class="form-control @error('sms_rate') is-invalid @enderror" value="{{ old('sms_rate', $smsSetting->sms_rate) }}" required>
+                                @error('sms_rate')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
+                            </div>
+                            
+                            <div class="col-md-4 form-group">
+                                <label for="sms_count">SMS Count <span class="text-danger">*</span></label>
+                                <input type="number" id="sms_count" name="sms_count" class="form-control @error('sms_count') is-invalid @enderror" value="{{ old('sms_count', $smsSetting->sms_count) }}" required>
+                                @error('sms_count')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
+                            </div>
+                        </div>
+
+                        <div class="form-group mt-3">
+                            <button type="submit" class="btn btn-primary">Update Settings</button>
+                        </div>
+                    </form>
                 </div>
             </div>
         </div>

@@ -9,7 +9,7 @@ use App\Http\Controllers\Backend\{
     SupplierPaymentController, SupplierPaymentAlertController, ProductController, DirectAddProductStockInSellController,
     ExpenseController, AssetController, EmployeeSalaryController, StockInController, ReportController, SupplierReportController,
     ProfitReportController, DailyReportController, InvoiceController, SellProductController, ReturnSellProductController, MenuController,
-    SettingsController, ProfileController, UnitController, SmsSettingController, CustomerPaymentController, CartController,UserDataController
+    SettingsController, ProfileController, UnitController, SmsSettingController, CustomerPaymentController, CartController,UserDataController,OwnerDepositController,TransactionController
 };
 use App\Http\Controllers\Api\{
     CategoryController as ApiCategoryController, BrandController as ApiBrandController, ProductController as ApiProductController,
@@ -77,7 +77,10 @@ Route::group(['middleware' => ['auth', 'role:super-admin|admin|station|staff']],
         'units' => UnitController::class,
         'customer-payments' => CustomerPaymentController::class,
         'sms-settings' => SmsSettingController::class,
+        'owner-deposits' => OwnerDepositController::class,
+        'transactions' => TransactionController::class,
     ]);
+    
     Route::post('sms/send', [SmsSendController::class, 'send'])->name('sms.send');
 
     // Bank Management
@@ -103,9 +106,10 @@ Route::group(['middleware' => ['auth', 'role:super-admin|admin|station|staff']],
     Route::delete('/notifications', [NotificationController::class, 'destroyAll'])->name('notifications.destroy.all');
 
     // Employee Salaries
-    Route::prefix('employees')->group(function () {
-        Route::resource('salarypays', EmployeeSalaryController::class);
-    });
+    Route::resource('salarypays', EmployeeSalaryController::class);
+    // Route::prefix('employees')->group(function () {
+       
+    // });
 
     // Product Management
     Route::prefix('products')->group(function () {

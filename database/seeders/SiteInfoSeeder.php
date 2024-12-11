@@ -27,12 +27,12 @@ class SiteInfoSeeder extends Seeder
 
             // Create the SiteInfo record with user_id = 1
             SiteInfo::create([
-                'name' => 'Company Name',
+                'name' => 'NexGen IT',
                 'phone' => '01731002123',
                 'email' => 'nexgenitltd@gmail.com',
-                'logo' => 'default-logo.png',
-                'print_logo' => 'default-print-logo.png',
-                'fav_icon' => 'default-favicon.ico',
+                'logo' => null,
+                'print_logo' => null,
+                'fav_icon' => null,
                 'short_about' => 'Short about your company.',
                 'address' => 'Your Company Address',
                 'currency' => 'USD',
@@ -40,7 +40,7 @@ class SiteInfoSeeder extends Seeder
                 'return_policy' => 'Your return policy goes here.',
                 'barcode_height' => '100px',
                 'barcode_width' => '160px',
-                'user_id' => 1, // Ensure this user ID exists in the users table
+                'user_id' => 1,
             ]);
         }
     }

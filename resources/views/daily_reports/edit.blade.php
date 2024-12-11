@@ -207,7 +207,7 @@
 							                       placeholder="{{ $website_info->currency }}" readonly />
 							            </td>
 							        </tr>
-							        @if(Auth::user()->role == 'admin')
+							        @can('show profit')
 							        <tr>
 							            <td>Net Profit</td>
 							            <td>
@@ -217,7 +217,7 @@
 							                       placeholder="{{ $website_info->currency }}" readonly />
 							            </td>
 							        </tr>
-							        @endif
+							        @endcan
 							        <!-- Cash in Hand for Next Day Section -->
 							        <tr><th colspan="2" class="text-center bg-info text-white">Cash in Hand for Next Day</th></tr>
 							        <tr>

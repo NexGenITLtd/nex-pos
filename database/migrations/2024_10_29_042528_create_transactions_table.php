@@ -14,14 +14,15 @@ return new class extends Migration
     public function up()
     {
         Schema::create('transactions', function (Blueprint $table) {
-            $table->id(); // Auto-incrementing ID
-            $table->foreignId('user_id')->constrained()->onDelete('cascade'); // User reference
-            $table->foreignId('store_id')->constrained()->onDelete('cascade'); // Store reference
-            $table->decimal('debit', 15, 2)->default(0); // Debit amount
-            $table->decimal('credit', 15, 2)->default(0); // Credit amount
-            $table->decimal('balance', 15, 2)->default(0); // Balance after transaction
-            $table->string('note')->nullable(); // Optional note for the transaction
-            $table->timestamps(); // Created and updated timestamps
+            $table->id();
+            $table->foreignId('store_id')->constrained()->onDelete('cascade');
+            $table->foreignId('bank_account_id')->constrained()->onDelete('cascade');
+            $table->decimal('debit', 15, 2)->default(0);
+            $table->decimal('credit', 15, 2)->default(0);
+            $table->decimal('balance', 15, 2)->default(0); // Current balance
+            $table->foreignId('created_by')->constrained('users')->onDelete('cascade'); // User who created the transaction
+            $table->text('note')->nullable(); // Description of the transaction
+            $table->timestamps();
         });
     }
 

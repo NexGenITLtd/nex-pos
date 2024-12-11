@@ -62,6 +62,7 @@ class UserRolePermissionSeeder extends Seeder
                     'email' => 'superadmin@gmail.com',
                     'password' => Hash::make ('12345678'),
                     'role_id' => 1,
+                    'store_id' => 1,
                 ]);
 
         $superAdminUser->assignRole($superAdminRole);
@@ -74,6 +75,7 @@ class UserRolePermissionSeeder extends Seeder
                             'email' => 'admin@gmail.com',
                             'password' => Hash::make ('12345678'),
                             'role_id' => 2,
+                            'store_id' => 2,
                         ]);
 
         $adminUser->assignRole($adminRole);
@@ -85,6 +87,7 @@ class UserRolePermissionSeeder extends Seeder
                             'email' => 'station@gmail.com',
                             'password' => Hash::make ('12345678'),
                             'role_id' => 3,
+                            'store_id' => 3,
                         ]);
 
         $stationUser->assignRole($stationRole);
@@ -97,6 +100,7 @@ class UserRolePermissionSeeder extends Seeder
                             'email' => 'staff@gmail.com',
                             'password' => Hash::make('12345678'),
                             'role_id' => 4,
+                            'store_id' => 4,
                         ]);
 
         $staffUser->assignRole($staffRole);

@@ -2,30 +2,71 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use App\Models\BankAccount;
+use App\Models\Store;
+use App\Models\User;
 
 class Transaction extends Model
 {
-    use HasFactory;
     protected $fillable = [
-        'user_id',
-        'store_id', // Added store_id
+        'store_id',
+        'bank_account_id',
         'debit',
         'credit',
         'balance',
+        'created_by',
         'note',
     ];
 
-    // Define a relationship with the User model
-    public function user()
-    {
-        return $this->belongsTo(User::class);
+    public function store(){
+        return $this->belongsTo(Store::class);
+    }
+    public function bankAccount(){
+        return $this->belongsTo(BankAccount::class);
+    }
+    public function creator(){
+        return $this->belongsTo(User::class, 'created_by');
     }
 
-    // Define a relationship with the Store model (if applicable)
-    public function store()
+    /**
+     * Create a new transaction and update the bank account balance.
+     *
+     * @param int $store_id
+     * @param int $bank_account_id
+     * @param float $debit
+     * @param float $credit
+     * @param int $user_id
+     * @param string|null $note
+     * @return Transaction
+     * @throws \Exception
+     */
+    public static function createTransaction($store_id, $bank_account_id, $debit = 0, $credit = 0, $user_id, $note = null)
     {
-        return $this->belongsTo(Store::class);
+        // Fetch the bank account
+        $bankAccount = BankAccount::find($bank_account_id);
+
+        if (!$bankAccount) {
+            throw new \Exception("Bank account with ID {$bank_account_id} not found.");
+        }
+
+        // Calculate the new balance
+        $newBalance = $bankAccount->current_balance - $debit + $credit;
+
+        // Create the transaction
+        $transaction = self::create([
+            'store_id' => $store_id,
+            'bank_account_id' => $bank_account_id,
+            'debit' => $debit,
+            'credit' => $credit,
+            'balance' => $newBalance,
+            'created_by' => $user_id,
+            'note' => $note,
+        ]);
+
+        // Update the bank account's balance
+        $bankAccount->updateBalance($debit, $credit);
+
+        return $transaction;
     }
 }

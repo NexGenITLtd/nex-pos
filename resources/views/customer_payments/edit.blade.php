@@ -73,14 +73,14 @@
 				          	<table class="table">
 				          		<thead>
 				          			<tr class="text-info">
-				          				<th width="60%">Total payable amount</th>
+				          				<th width="60%">Total payable amount (due)</th>
 				          				<th width="40%">@{{ total_payable_amount }}</th>
 				          			</tr>
 				          			<tr class="text-green">
 				          				<th width="60%">Paid amount</th>
 				          				<th width="40%">@{{ total_payments }}</th>
 				          			</tr>
-				          			<tr class="text-red">
+				          			<tr class="text-red d-none">
 				          				<th width="60%">Due amount</th>
 				          				<th width="40%">@{{ remaining_amount }}</th>
 				          			</tr>

@@ -7,7 +7,11 @@ use App\Models\SupplierPayment;
 use App\Models\Store;
 use App\Models\Supplier;
 use App\Models\BankAccount;
+use App\Models\Transaction;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Collection;
 use App\Http\Controllers\Controller;
+use Auth;
 
 class SupplierPaymentController extends Controller
 {
@@ -74,17 +78,49 @@ class SupplierPaymentController extends Controller
 
     public function store(SupplierPaymentRequest $request)
     {
-        $supplier_payment = SupplierPayment::create($request->validated());
+        // Begin a transaction for data integrity
+        DB::beginTransaction();
 
-        return redirect()->route('supplier-payments.index')->with('flash_success', '
-            <script>
-                Toast.fire({
-                    icon: `success`,
-                    title: `Supplier payment successfully added`
-                })
-            </script>
-        ');
+        try {
+            // Create the supplier payment
+            $supplierPayment = SupplierPayment::create($request->validated());
+
+            // Use the createTransaction function to handle balance updates and record the transaction
+            Transaction::createTransaction(
+                $supplierPayment->store_id,
+                $supplierPayment->bank_account_id,
+                $supplierPayment->amount, // Debit the bank account
+                0, // No credit
+                Auth::user()->id,
+                "Supplier Payment: Supplier ID {$supplierPayment->supplier_id}, Amount: {$supplierPayment->amount}"
+            );
+
+            // Commit the transaction
+            DB::commit();
+
+            return redirect()->route('supplier-payments.index')->with('flash_success', '
+                <script>
+                    Toast.fire({
+                        icon: `success`,
+                        title: `Supplier payment successfully added`
+                    })
+                </script>
+            ');
+        } catch (\Exception $e) {
+            // Rollback the transaction in case of an error
+            DB::rollBack();
+
+            return redirect()->route('supplier-payments.create')->with('flash_error', '
+                <script>
+                    Toast.fire({
+                        icon: `error`,
+                        title: `Failed to add supplier payment`
+                    })
+                </script>
+            ');
+        }
     }
+
 
     public function edit($id)
     {
@@ -97,29 +133,111 @@ class SupplierPaymentController extends Controller
 
     public function update(SupplierPaymentRequest $request, $id)
     {
-        $supplier_payment = SupplierPayment::findOrFail($id);
-        $supplier_payment->update($request->validated());
+        // Begin a transaction for data integrity
+        DB::beginTransaction();
 
-        return redirect()->route('supplier-payments.index')->with('flash_success', '
-            <script>
-                Toast.fire({
-                    icon: `success`,
-                    title: `Supplier payment successfully updated`
-                })
-            </script>
-        ');
+        try {
+            // Retrieve the supplier payment
+            $supplierPayment = SupplierPayment::findOrFail($id);
+
+            // Reverse the previous transaction
+            Transaction::createTransaction(
+                $supplierPayment->store_id,
+                $supplierPayment->bank_account_id,
+                0,
+                $supplierPayment->amount, // Credit the previous payment amount
+                Auth::user()->id,
+                "Reversed Supplier Payment: Supplier ID {$supplierPayment->supplier_id}, Amount: {$supplierPayment->amount}"
+            );
+
+            // Update the supplier payment record
+            $supplierPayment->update($request->validated());
+
+            // Create a new transaction for the updated payment
+            Transaction::createTransaction(
+                $request->store_id,
+                $request->bank_account_id,
+                $request->amount, // Debit the new payment amount
+                0,
+                Auth::user()->id,
+                "Updated Supplier Payment: Supplier ID {$request->supplier_id}, Amount: {$request->amount}"
+            );
+
+            // Commit the transaction
+            DB::commit();
+
+            return redirect()->route('supplier-payments.index')->with('flash_success', '
+                <script>
+                    Toast.fire({
+                        icon: `success`,
+                        title: `Supplier payment successfully updated`
+                    })
+                </script>
+            ');
+        } catch (\Exception $e) {
+            // Rollback the transaction in case of an error
+            DB::rollBack();
+
+            return redirect()->route('supplier-payments.edit', $id)->with('flash_error', '
+                <script>
+                    Toast.fire({
+                        icon: `error`,
+                        title: `Failed to update supplier payment`
+                    })
+                </script>
+            ');
+        }
     }
+
+
 
     public function destroy($id)
     {
-        SupplierPayment::findOrFail($id)->delete();
-        return redirect()->route('supplier-payments.index')->with('flash_success', '
-            <script>
-                Toast.fire({
-                    icon: `success`,
-                    title: `Supplier payment successfully deleted`
-                })
-            </script>
-        ');
+        // Begin a transaction for data integrity
+        DB::beginTransaction();
+
+        try {
+            // Retrieve the supplier payment
+            $supplierPayment = SupplierPayment::findOrFail($id);
+
+            // Use the createTransaction function to handle balance updates and record the transaction
+            Transaction::createTransaction(
+                $supplierPayment->store_id,
+                $supplierPayment->bank_account_id,
+                0, // No debit, as the amount is refunded
+                $supplierPayment->amount, // Credit the bank account
+                Auth::user()->id,
+                "Deleted Supplier Payment: Supplier ID {$supplierPayment->supplier_id}, Refunded Amount: {$supplierPayment->amount}"
+            );
+
+            // Delete the supplier payment record
+            $supplierPayment->delete();
+
+            // Commit the transaction
+            DB::commit();
+
+            return redirect()->route('supplier-payments.index')->with('flash_success', '
+                <script>
+                    Toast.fire({
+                        icon: `success`,
+                        title: `Supplier payment successfully deleted`
+                    })
+                </script>
+            ');
+        } catch (\Exception $e) {
+            // Rollback the transaction in case of an error
+            DB::rollBack();
+
+            return redirect()->route('supplier-payments.index')->with('flash_error', '
+                <script>
+                    Toast.fire({
+                        icon: `error`,
+                        title: `Failed to delete supplier payment`
+                    })
+                </script>
+            ');
+        }
     }
+
+
 }

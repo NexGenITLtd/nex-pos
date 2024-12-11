@@ -103,11 +103,11 @@
 					            <th>Extra Cash From Owner</th>
 					            <th>Sales</th>
 					            <th>Return Sell</th>
-					            @if(Auth::user()->role == 'admin')
+					            @can('show profit')
 					            <th>Purchase Price</th>
 					            <th>Profit</th>
 					            <th>Net Profit</th>
-					            @endif
+					            @endcan
 					            <th>Due</th>
 					            <th>Supplier Payments</th>
 					            <th>Expense</th>
@@ -130,11 +130,11 @@
 					                <td>{{ number_format($report->extra_cash, 2) }}</td>
 					                <td>{{ number_format($report->total_sales, 2) }}</td>
 					                <td>{{ number_format($report->total_return_sell, 2) }}</td>
-					                @if(Auth::user()->role == 'admin')
+					                @can('show profit')
 					                <td>{{ number_format($report->total_purchase_price, 2) }}</td>
 					                <td>{{ number_format($report->total_profit, 2) }}</td>
 					                <td>{{ number_format($report->net_profit, 2) }}</td>
-					                @endif
+					                @endcan
 					                <td>{{ number_format($report->total_due, 2) }}</td>
 					                <td>{{ number_format($report->total_supplier_payment, 2) }}</td>
 					                <td>{{ number_format($report->total_expense, 2) }}</td>
@@ -145,14 +145,14 @@
 					                <td>{{ number_format($report->cash_in_hand, 2) }}</td>
 					                <td>
 					                    <a href="{{ route('dailyreports.show', $report->id) }}" class="btn btn-info btn-sm">Show</a>
-					                    @if(Auth::user()->role == 'admin')
+					                    
 					                    <a href="{{ route('dailyreports.edit', $report->id) }}" class="btn btn-warning btn-sm">Edit</a>
 					                    <form action="{{ route('dailyreports.destroy', $report->id) }}" method="POST" style="display:inline;">
 					                        @csrf
 					                        @method('DELETE')
 					                        <button type="submit" class="btn btn-danger btn-sm">Delete</button>
 					                    </form>
-					                    @endif
+					                    
 					                </td>
 					            </tr>
 					        @endforeach
@@ -165,11 +165,11 @@
 					            <th>{{ number_format($reports->sum('extra_cash'), 2) }}</th>
 					            <th>{{ number_format($reports->sum('total_sales'), 2) }}</th>
 					            <th>{{ number_format($reports->sum('total_return_sell'), 2) }}</th>
-					            @if(Auth::user()->role == 'admin')
+					            @can('show profit')
 					            <th>{{ number_format($reports->sum('total_purchase_price'), 2) }}</th>
 					            <th>{{ number_format($reports->sum('total_profit'), 2) }}</th>
 					            <th>{{ number_format($reports->sum('net_profit'), 2) }}</th>
-					            @endif
+					            @endcan
 					            <th>{{ number_format($reports->sum('total_due'), 2) }}</th>
 					            <th>{{ number_format($reports->sum('total_supplier_payment'), 2) }}</th>
 					            <th>{{ number_format($reports->sum('total_expense'), 2) }}</th>

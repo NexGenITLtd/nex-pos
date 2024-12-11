@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Models\CustomerPayment;
 use App\Models\Store;
 use App\Models\Invoice;
+use App\Models\Transaction;
 use Illuminate\Support\Facades\DB;
 use Spatie\Permission\Models\Permission;
 use Auth;
@@ -52,7 +53,10 @@ class CustomerPaymentController extends Controller
     {
         return view('customer_payments.create');
     }
-
+public function show($id)
+    {
+        //
+    }
     public function store(Request $request)
     {
         if ($request->isMethod('post')) {
@@ -91,10 +95,7 @@ class CustomerPaymentController extends Controller
         return redirect()->back()->withErrors('Invalid request method.');
     }
 
-    public function show($id)
-    {
-        //
-    }
+    
 
     public function edit($id)
     {
@@ -162,6 +163,10 @@ class CustomerPaymentController extends Controller
 
             // Retrieve the associated invoice
             $invoice = Invoice::findOrFail($customerPayment->invoice_id);
+            // Capture relevant details for the transaction
+            $store_id = $invoice->store_id;
+            $paid_amount = $customerPayment->amount;
+            $user_id = auth()->id();
 
             // Step 1: Adjust the invoice's paid amount and due amount
             $invoice->paid_amount -= $customerPayment->amount;
@@ -172,6 +177,19 @@ class CustomerPaymentController extends Controller
 
             // Step 2: Delete the customer payment
             $customerPayment->delete();
+
+
+            // Record the transaction for the deletion
+            if ($paid_amount > 0) {
+                Transaction::createTransaction(
+                    $store_id,
+                    $invoice->bank_account_id, // Assuming the invoice has a reference to the bank account
+                    $paid_amount, // Debit the amount paid from the bank account
+                    0, // No credit
+                    $user_id,
+                    "Invoice Deleted: Invoice ID #$id"
+                );
+            }
         });
 
         // Redirect back to the customer payments index with a success message
@@ -190,24 +208,51 @@ class CustomerPaymentController extends Controller
             $customer_payment->payment_from_account_no = $account_no;
             $customer_payment->payment_trx_note = $trx_note;
             $customer_payment->save();
+
+
+            // Record the transaction
+			Transaction::createTransaction(
+				$store_id,
+				$account_id,
+				0, // No debit for this transaction
+				$amount, // Credit the bank account
+				auth()->id(),
+				"Invoice payment for Invoice #$invoice_id"
+			);
         }
     }
+
+
     protected function updatePaymentById($paymentId, $amount, $cardType = null, $accountId, $cardNumber = null, $senderNo = null, $trxNo = null)
-    {
-        // Find the existing customer payment by ID
-        $customerPayment = CustomerPayment::findOrFail($paymentId);
+{
+    // Find the existing customer payment by ID
+    $customerPayment = CustomerPayment::findOrFail($paymentId);
 
-        // Update the payment details
-        $customerPayment->update([
-            'amount' => $amount,
-            'bank_account_id' => $accountId,
-            'card_type' => $cardType,
-            'payment_from_account_no' => $senderNo,
-            'payment_trx_note' => $trxNo,
-        ]);
+    // Store the previous amount of the payment
+    $previousAmount = $customerPayment->amount ?? 0;
+    $difference = $amount - $previousAmount;
 
-        // Optionally, return the updated payment object
-        // return $customerPayment;
+    // If the amount has changed, create a transaction
+    if ($difference != 0) {
+        Transaction::createTransaction(
+            $customerPayment->store_id, // Store ID from the customer payment
+            $accountId, // Bank account ID for the transaction
+            $difference < 0 ? abs($difference) : 0, // Debit for reductions
+            $difference > 0 ? $difference : 0, // Credit for additions
+            auth()->id(), // User ID who made the update
+            "Updated Payment: Invoice ID #$customerPayment->invoice_id" // Transaction description
+        );
     }
+
+    // Update the payment details with the new values
+    $customerPayment->update([
+        'amount' => $amount,
+        'bank_account_id' => $accountId, // Updated account ID
+        'card_type' => $cardType, // Card type (nullable)
+        'payment_from_account_no' => $senderNo, // Sender account number (nullable)
+        'payment_trx_note' => $trxNo, // Transaction note (nullable)
+    ]);
+}
+
 
 }

@@ -35,20 +35,7 @@
 
     <!-- General Information -->
 <div class="col-md-12">
-    <!-- Success and Error Messages -->
-    @if(session('success'))
-        <div class="alert alert-success">{{ session('success') }}</div>
-    @endif
-
-    @if ($errors->any())
-        <div class="alert alert-danger">
-            <ul>
-                @foreach ($errors->all() as $error)
-                    <li>{{ $error }}</li>
-                @endforeach
-            </ul>
-        </div>
-    @endif
+    
     <form action="{{ route('employees.store') }}" method="POST" enctype="multipart/form-data">
         @csrf
         <div class="card card-primary">
@@ -61,6 +48,7 @@
                 </div>
             </div>
             <div class="card-body">
+                @include('partials.alerts')
                 <div class="row">
                     <!-- Name -->
                     <div class="col-md-4 form-group">
