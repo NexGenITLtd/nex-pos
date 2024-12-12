@@ -113,8 +113,8 @@
 					            <th>Expense</th>
 					            <th>Salary</th>
 					            <th>Extra Expense</th>
-					            <th>Owner Cash Deposit</th>
-					            <th>Owner Bank Deposit</th>
+					            <th>Owner Cash & Bank Deposit</th>
+					            <!-- <th>Owner Bank Deposit</th> -->
 					            <th>Cash in Hand</th>
 					            <th>Actions</th>
 					        </tr>
@@ -141,7 +141,7 @@
 					                <td>{{ number_format($report->total_salary, 2) }}</td>
 					                <td>{{ number_format($report->extra_expense, 2) }}</td>
 					                <td>{{ number_format($report->owner_deposit, 2) }}</td>
-					                <td>{{ number_format($report->bank_deposit, 2) }}</td>
+					                <!-- <td>{{ number_format($report->bank_deposit, 2) }}</td> -->
 					                <td>{{ number_format($report->cash_in_hand, 2) }}</td>
 					                <td>
 					                    <a href="{{ route('dailyreports.show', $report->id) }}" class="btn btn-info btn-sm">Show</a>
@@ -176,7 +176,7 @@
 					            <th>{{ number_format($reports->sum('total_salary'), 2) }}</th>
 					            <th>{{ number_format($reports->sum('extra_expense'), 2) }}</th>
 					            <th>{{ number_format($reports->sum('owner_deposit'), 2) }}</th>
-					            <th>{{ number_format($reports->sum('bank_deposit'), 2) }}</th>
+					            <!-- <th>{{ number_format($reports->sum('bank_deposit'), 2) }}</th> -->
 					            <th>{{ number_format($reports->sum('cash_in_hand'), 2) }}</th>
 					            <th></th>
 					        </tr>

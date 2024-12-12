@@ -178,7 +178,7 @@
 							        <!-- Deposits -->
 							        <tr><th colspan="2" class="text-center bg-success text-white">Deposits</th></tr>
 							        <tr>
-							            <td>Owner Cash Deposit</td>
+							            <td>Owner Cash & Bank Deposit</td>
 							            <td>
 							                <input type="number" class="form-control text-center" name="owner_deposit" 
 							                       @input="calculation()" 
@@ -186,7 +186,7 @@
 							                       placeholder="{{ $website_info->currency }}" step="0.01" />
 							            </td>
 							        </tr>
-							        <tr>
+							        <tr class="d-none">
 							            <td>Owner Bank Deposit</td>
 							            <td>
 							                <input type="number" class="form-control text-center" name="bank_deposit" 

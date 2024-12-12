@@ -40,11 +40,9 @@
           <div class="card-header">
             <h5 class="card-title">{{ $cardHeader??'Owner Deposits' }}</h5>
             <!-- Settings Icon -->
-            <span  title="Filter" id="settingsIcon" class=" btn-tool float-right ml-2 " style="font-size: 1.2rem; transition: transform 0.3s;">
-                <i class="fas fa-cog"></i>
-            </span>
+            
             <!-- Card Tools Section -->
-            <div class="card-tools no-print" id="settingsPanel" style="display: none;">
+            <div class="card-tools no-print" id="settingsPanel">
               <form method="GET" action="{{ route('owner-deposits.index') }}" class="form-inline mb-4" id="filterForm">
                   <div class="form-group mx-sm-3 mb-2">
                       <label for="date_filter" class="sr-only">Filter by Date:</label>
@@ -87,32 +85,6 @@
                   <a href="{{route('owner-deposits.create')}}" class="btn btn-success btn-sm  ml-2 mb-2"">Add New</a>
               </form>
 
-              <script>
-                  // JavaScript to toggle custom date inputs
-                  const dateFilter = document.getElementById('date_filter');
-                  const customDateInputs = document.getElementById('customDateInputs');
-                  const filterForm = document.getElementById('filterForm');
-
-                  // Show/hide custom date inputs based on initial selection
-                  if (dateFilter.value === 'custom') {
-                      customDateInputs.style.display = 'block';
-                  }
-
-                  dateFilter.addEventListener('change', function() {
-                      if (this.value === 'custom') {
-                          customDateInputs.style.display = 'block';
-                      } else {
-                          customDateInputs.style.display = 'none';
-                      }
-                  });
-
-                  // Hide custom date inputs when the form is submitted
-                  filterForm.addEventListener('submit', function() {
-                      if (dateFilter.value !== 'custom') {
-                          customDateInputs.style.display = 'none';
-                      }
-                  });
-              </script>
             </div>
           </div>
           <!-- /.card-header -->
@@ -165,26 +137,31 @@
 <!-- /.content -->
 @endsection
 @section('script')
+
 <script>
-    let isClockwise = true; // Variable to track rotation direction
-    const settingsIcon = document.getElementById('settingsIcon');
-    const settingsPanel = document.getElementById('settingsPanel');
+    // JavaScript to toggle custom date inputs
+    const dateFilter = document.getElementById('date_filter');
+    const customDateInputs = document.getElementById('customDateInputs');
+    const filterForm = document.getElementById('filterForm');
 
-    settingsIcon.addEventListener('click', function () {
-        // Toggle settings panel visibility
-        if (settingsPanel.style.display === 'none' || settingsPanel.style.display === '') {
-            settingsPanel.style.display = 'block';
-        } else {
-            settingsPanel.style.display = 'none';
-        }
+    // Show/hide custom date inputs based on initial selection
+    if (dateFilter.value === 'custom') {
+        customDateInputs.style.display = 'block';
+    }
 
-        // Rotate the icon
-        if (isClockwise) {
-            settingsIcon.style.transform = 'rotate(90deg)';
+    dateFilter.addEventListener('change', function() {
+        if (this.value === 'custom') {
+            customDateInputs.style.display = 'block';
         } else {
-            settingsIcon.style.transform = 'rotate(-90deg)';
+            customDateInputs.style.display = 'none';
         }
-        isClockwise = !isClockwise; // Toggle rotation direction
+    });
+
+    // Hide custom date inputs when the form is submitted
+    filterForm.addEventListener('submit', function() {
+        if (dateFilter.value !== 'custom') {
+            customDateInputs.style.display = 'none';
+        }
     });
 </script>
 <!-- jQuery -->

@@ -31,7 +31,7 @@ class InvoiceController extends Controller
 	public function __construct()
     {
         $this->middleware('auth');
-        $this->middleware('permission:view invoice')->only('index','show');
+        $this->middleware('permission:view invoice')->only('index','show','downloadInvoicePDF','downloadInvoiceListPDF','jsonInvoice', 'invoice_show_for_print');
         $this->middleware('permission:create invoice')->only('create', 'store');
         $this->middleware('permission:update invoice')->only('edit', 'update','sellProductUpdate','sellProductUpdateQty','sellProductDelete');
         $this->middleware('permission:delete invoice')->only('destroy');
@@ -221,7 +221,6 @@ class InvoiceController extends Controller
 		}
 	}
 
-
 	public function edit($id)
 	{
 	    // Retrieve the invoice using the given ID
@@ -294,7 +293,6 @@ class InvoiceController extends Controller
 	    // Pass data to the view
 	    return view('invoices.edit', compact('invoice', 'sellProducts', 'returnSellProducts', 'products', 'customers', 'payments','mergedProducts'));
 	}
-
 
 	public function sellProductUpdate(Request $request)
 	{
@@ -618,7 +616,6 @@ class InvoiceController extends Controller
 		return $id;
 	}
 
-
     public function index(Request $request)
 	{
 	    $stores = Store::all(); // Assuming you have a Store model
@@ -845,7 +842,6 @@ class InvoiceController extends Controller
 			');
 		}
 	}
-
 
     public function invoice_show_for_print($id) // for print
 	{

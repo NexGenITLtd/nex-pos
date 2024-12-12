@@ -12,6 +12,7 @@ use App\Models\EmployeeSalary;
 use App\Models\StockIn;
 use App\Models\SellProduct;
 use App\Models\SupplierPayment;
+use App\Models\OwnerDeposit;
 use Carbon\Carbon;
 use Spatie\Permission\Models\Permission;
 use PDF;
@@ -100,6 +101,8 @@ class DailyReportController extends Controller
         $total_salary = 0;
         $cash_in_hand = 0;
         $previous_cash_in_hand = 0;
+        $owner_deposit = 0;
+        $extra_cash = 0;
 
         // Retrieve form data
         $store_id = $request->input('store_id', 0); // Default to 0 if not selected
@@ -172,6 +175,20 @@ class DailyReportController extends Controller
         }
         $total_salary = $salaryQuery->sum('amount');
 
+        // Fetch owner deposit
+        $ownerDepositQuery = OwnerDeposit::whereDate('date', $targetDate)->where('transaction_type', 'deposit');
+        if ($store_id) {
+            $ownerDepositQuery->where('store_id', $store_id);
+        }
+        $owner_deposit = $ownerDepositQuery->sum('amount');
+
+        // Fetch owner deposit
+        $ownerWithdrawalQuery = OwnerDeposit::whereDate('date', $targetDate)->where('transaction_type', 'withdrawal');
+        if ($store_id) {
+            $ownerWithdrawalQuery->where('store_id', $store_id);
+        }
+        $extra_cash = $ownerWithdrawalQuery->sum('amount');
+
         // Set the previous day's cash in hand if available
         $previous_cash_in_hand = $lastPreviousCash ? $lastPreviousCash->cash_in_hand : 0;
 
@@ -183,6 +200,8 @@ class DailyReportController extends Controller
             'total_invoices',
             'total_sales',
             'total_purchase_price',
+            'owner_deposit',
+            'extra_cash',
             'total_profit',
             'total_due',
             'total_return_sell',

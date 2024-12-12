@@ -150,7 +150,7 @@
 							                <input type="number" class="form-control text-center" name="extra_cash" 
 							                       @input="calculation()" 
 							                       v-model="extra_cash" 
-							                       value="{{ old('extra_cash', 0) }}" 
+							                       value="{{ old('extra_cash', $extra_cash) }}" 
 							                       placeholder="{{ $website_info->currency }}" step="0.01" />
 							            </td>
 							        </tr>
@@ -221,23 +221,23 @@
 							        <!-- Deposits -->
 							        <tr><th colspan="2" class="text-center bg-success text-white">Deposits</th></tr>
 							        <tr>
-							            <td>Owner Cash Deposit </td>
+							            <td>Owner Cash & Bank Deposit </td>
 							            <td>
 							                <input type="number" class="form-control text-center" name="owner_deposit" 
 							                       @input="calculation()" 
 							                       v-model="owner_deposit" 
-							                       value="{{ old('owner_deposit', 0) }}" 
-							                       placeholder="{{ $website_info->currency }}" step="0.01" />
+							                       value="{{ old('owner_deposit', $owner_deposit) }}" 
+							                       placeholder="{{ $website_info->currency }}" step="0.01" readonly />
 							            </td>
 							        </tr>
-							        <tr>
+							        <tr class="d-none">
 							            <td>Owner Bank Deposit</td>
 							            <td>
 							                <input type="number" class="form-control text-center" name="bank_deposit" 
 							                       @input="calculation()" 
 							                       v-model="bank_deposit" 
 							                       value="{{ old('bank_deposit', 0) }}" 
-							                       placeholder="{{ $website_info->currency }}" step="0.01" />
+							                       placeholder="{{ $website_info->currency }}" step="0.01" readonly/>
 							            </td>
 							        </tr>
 
