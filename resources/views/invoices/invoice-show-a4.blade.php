@@ -5,78 +5,96 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Invoice</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-    <style>
-        
-        .invoice {
-            background-color: #fff;
-            padding: 15px 15px;
-            border-radius: 10px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-        }
-
-        .invoice-header {
-            border-bottom: 2px solid #dee2e6;
-            margin-bottom: 10px;
-        }
-
-        .invoice-footer {
-            border-top: 2px solid #dee2e6;
-            margin-top: 20px;
-        }
-
-        .invoice-title {
-            font-size: 32px;
-            font-weight: bold;
-            color: #007bff;
-        }
-
-        .table th,
-        .table td {
-            vertical-align: middle;
-            border: 1px solid #dee2e6;
-        }
-
-        .total-row {
-            border: 1px solid #dee2e6;
-        }
-
-        .total-row th {
-            text-align: right;
-        }
-
-        .total-row td {
-            font-weight: bold;
-        }
-
-        .logo {
-            max-width: 70px;
-            height: auto;
-        }
-
-        .buttons {
-            margin-top: 20px;
-            text-align: right;
-        }
-        @media print {
-          .no-print {
-            display: none;
-          }
-        }
-    </style>
+    
 </head>
 
 <body>
-    <div class="container my-5">
+    <div class="container my-5" id="A4">
+        
+        <style>
+            body {
+                background-color: #f8f9fa;
+            }
+            p{
+                margin-bottom: 0;
+            }
+            .invoice {
+                background-color: #fff;
+                padding: 15px 15px;
+                border-radius: 10px;
+                box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            }
+
+            .invoice-header {
+                border-bottom: 2px solid #dee2e6;
+                margin-bottom: 10px;
+            }
+
+            .invoice-footer {
+                border-top: 2px solid #dee2e6;
+                margin-top: 20px;
+            }
+
+            .invoice-title {
+                font-size: 32px;
+                font-weight: bold;
+                color: #007bff;
+            }
+
+            .table-invoice th,
+            .table-invoice td {
+                vertical-align: middle;
+                border: 1px solid #dee2e6;
+                padding : 4px;
+            }
+
+            .total-row {
+                border: 1px solid #dee2e6;
+            }
+
+            .total-row th {
+                text-align: right;
+            }
+
+            .total-row td {
+                font-weight: bold;
+            }
+
+            .logo {
+                max-width: 70px;
+                height: auto;
+            }
+
+            .buttons {
+                margin-top: 20px;
+                text-align: right;
+            }
+            @media print {
+              .no-print {
+                display: none;
+              }
+            }
+        .text-muted { color: #6c757d !important;}
+        .justify-content-between {
+            display: flex;
+            justify-content: space-between;
+        }
+        .text-end {
+            text-align: right !important;
+        }
+        .align-items-center {
+            display: flex;
+            align-items: center;
+        }
+        
+        </style>
         <div class="row justify-content-center">
             <div class="col-md-12">
                 <div class="invoice" id="invoice">
                     <!-- Invoice Header -->
                     <div class="row justify-content-between">
                         <!-- Invoice number on left -->
-                        <div class="col-md-6">
+                        <div class="col-md-6 text-left">
                             <p>Invoice #: {{ $invoice->id }}</p>
                         </div>
                         <!-- Date on right -->
@@ -84,7 +102,7 @@
                             <p>Date: {{ $invoice->created_at->format('F j, Y') }}</p>
                         </div>
                     </div>
-                    <div class="justify-content-between align-items-center invoice-header">
+                    <div class="invoice-header">
                         
                         <div class="text-center">
                             @if (!empty($invoice->store->logo) && file_exists(public_path('images/stores/' . $invoice->store->logo)))
@@ -99,7 +117,7 @@
 
                     <!-- Customer Details -->
                     <div class="row mb-4">
-                        <div class="col-sm-6">
+                        <div class="col-sm-6 text-left">
                             <h6>Shop Info:</h6>
                             <p>{{ $invoice->store->address }}<br><i class="fa fa-phone"></i> {{ $invoice->store->phone }}<br><i class="fa fa-envelope"></i> {{ $invoice->store->email }}</p>
                             
@@ -128,7 +146,7 @@
 
                     <!-- Invoice Items -->
                     <div class="table-responsive">
-                        <table class="table table-bordered">
+                        <table class="table-invoice table  table-bordered">
                             <thead class="table-light">
                                 <tr>
                                     <!-- <th>#</th> -->
@@ -258,7 +276,7 @@
 
                     <!-- Payment Summary -->
                     <div class="row ">
-                        <div class="col-sm-6">
+                        <div class="col-sm-6 text-left">
                             @if($invoice->payments->isNotEmpty())
                                 <p class="lead">Payment Methods:</p>
                                 @foreach($invoice->payments as $payment)
@@ -288,37 +306,12 @@
 
                     <!-- Buttons -->
                     <div class="buttons no-print">
-                        <a href="#" class="btn btn-primary btn-sm" onclick="printDiv('invoic_div')">Print</a>
                         <a href="{{ route('invoice.pdf', $invoice->id) }}" class="btn btn-secondary btn-sm">Download</a>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-
-
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
-<script type="text/javascript">
-function printDiv(divId) {
-    var printContents = document.getElementById(divId).innerHTML;
-    var originalContents = document.body.innerHTML;
-
-    document.body.innerHTML = printContents;
-
-    window.print();
-
-    document.body.innerHTML = originalContents;
-}
-function downloadImage(divId) {
-    html2canvas(document.getElementById(divId)).then(function(canvas) {
-        // Create a link element
-        var link = document.createElement('a');
-        link.href = canvas.toDataURL(); // Convert the canvas to a data URL
-        link.download = 'invoice_' + divId + '.png'; // Set the file name
-        link.click(); // Trigger the download
-    });
-}
-</script>
 </body>
 
 </html>

@@ -14,9 +14,7 @@
     <!-- Sidebar user panel (optional) -->
     <div class="user-panel mt-3 pb-3 mb-3 d-flex">
       <div class="image">
-        <img src="{{ Auth::user()->img && file_exists(public_path('images/employees/' . Auth::user()->img)) 
-        ? asset('images/employees/' . Auth::user()->img) 
-        : asset('images/default.png') }}" height="60" width="60" alt="Employee Image">
+        <img src="{{ auth()->user()->img ? asset('images/employees/' . auth()->user()->img) : asset('images/default.png') }}" height="60" width="60" alt="Employee Image">
 
       </div>
       <div class="info">

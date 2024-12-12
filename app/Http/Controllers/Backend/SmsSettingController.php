@@ -14,14 +14,14 @@ class SmsSettingController extends Controller
     public function index()
     {
         $smsSettings  = SmsSetting::all();
-        return view('sms_settings.index', compact('smsSettings'));
+        return view('sms.settings.index', compact('smsSettings'));
     }
 
     // Show form to create a new setting
     public function create()
     {
         $stores = Store::get();
-        return view('sms_settings.create', compact('stores'));
+        return view('sms.settings.create', compact('stores'));
     }
 
     // Store a new setting
@@ -35,7 +35,7 @@ class SmsSettingController extends Controller
     public function edit(SmsSetting $smsSetting)
     {
         $stores = Store::get();
-        return view('sms_settings.edit', compact('smsSetting','stores'));
+        return view('sms.settings.edit', compact('smsSetting','stores'));
     }
 
     // Update an existing setting

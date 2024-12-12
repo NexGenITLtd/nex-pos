@@ -316,10 +316,10 @@
 							@endif
 
 
-							<div class="form-check mb-3">
-								<input class="form-check-input" type="checkbox" id="send_sms" v-model="send_sms" name="send_sms" value="1">
-								<label class="form-check-label" for="send_sms">
-									Send SMS to Customer
+							<div class="form-check">
+								<label class="text-danger" for="send_sms">
+									<input class="form-check-input" type="checkbox" id="send_sms" v-model="send_sms" name="send_sms" value="1">
+									Send SMS
 								</label>
 							</div>
 							</h3>

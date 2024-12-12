@@ -10,9 +10,7 @@
 
 <body>
     <div class="container my-5" id="A4">
-        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+        
         <style>
             body {
                 background-color: #f8f9fa;
@@ -43,10 +41,11 @@
                 color: #007bff;
             }
 
-            .table th,
-            .table td {
+            .table-invoice th,
+            .table-invoice td {
                 vertical-align: middle;
                 border: 1px solid #dee2e6;
+                padding : 4px;
             }
 
             .total-row {
@@ -75,6 +74,19 @@
                 display: none;
               }
             }
+        .text-muted { color: #6c757d !important;}
+        .justify-content-between {
+            display: flex;
+            justify-content: space-between;
+        }
+        .text-end {
+            text-align: right !important;
+        }
+        .align-items-center {
+            display: flex;
+            align-items: center;
+        }
+        
         </style>
         <div class="row justify-content-center">
             <div class="col-md-12">
@@ -90,7 +102,7 @@
                             <p>Date: {{ $invoice->created_at->format('F j, Y') }}</p>
                         </div>
                     </div>
-                    <div class="justify-content-between align-items-center invoice-header">
+                    <div class="invoice-header">
                         
                         <div class="text-center">
                             @if (!empty($invoice->store->logo) && file_exists(public_path('images/stores/' . $invoice->store->logo)))
@@ -134,7 +146,7 @@
 
                     <!-- Invoice Items -->
                     <div class="table-responsive">
-                        <table class="table table-bordered">
+                        <table class="table-invoice table  table-bordered">
                             <thead class="table-light">
                                 <tr>
                                     <!-- <th>#</th> -->
@@ -300,12 +312,7 @@
                 </div>
             </div>
         </div>
-        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
     </div>
-
-
-
-
 </body>
 
 </html>

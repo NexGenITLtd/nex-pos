@@ -2,14 +2,13 @@
 
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
-use App\Http\Controllers\SmsSendController;
 use App\Http\Controllers\Backend\{
     NotificationController, HomeController, UserController, EmployeeController, StoreController, CustomerController,
     CategoryController, BrandController, SupplierController, RackController, AccountController, CardController,
     SupplierPaymentController, SupplierPaymentAlertController, ProductController, DirectAddProductStockInSellController,
     ExpenseController, AssetController, EmployeeSalaryController, StockInController, ReportController, SupplierReportController,
     ProfitReportController, DailyReportController, InvoiceController, SellProductController, ReturnSellProductController, MenuController,
-    SettingsController, ProfileController, UnitController, SmsSettingController, CustomerPaymentController, CartController,UserDataController,OwnerDepositController,TransactionController
+    SettingsController, ProfileController, UnitController, SmsSettingController, CustomerPaymentController, CartController, UserDataController, OwnerDepositController, TransactionController, SendSmsController
 };
 use App\Http\Controllers\Api\{
     CategoryController as ApiCategoryController, BrandController as ApiBrandController, ProductController as ApiProductController,
@@ -81,7 +80,20 @@ Route::group(['middleware' => ['auth', 'role:super-admin|admin|station|staff']],
         'transactions' => TransactionController::class,
     ]);
     
-    Route::post('sms/send', [SmsSendController::class, 'send'])->name('sms.send');
+    // Route for SMS index (listing all SMS histories)
+    Route::get('sms', [SendSmsController::class, 'index'])->name('sms.index');
+
+    // Route for the SMS creation form
+    Route::get('sms/create', [SendSmsController::class, 'create'])->name('sms.create');
+
+    // Route to store a new SMS (changed from send to store)
+    Route::post('sms', [SendSmsController::class, 'store'])->name('sms.store');
+
+    Route::get('/sms/customers', [SendSmsController::class, 'fetchCustomers'])->name('sms.customers');
+    Route::get('/sms/user-data', [SendSmsController::class, 'fetchUserData'])->name('sms.user-data');
+    Route::get('/stores/{id}/balance', [SendSmsController::class, 'getBalance']);
+
+
 
     // Bank Management
     Route::prefix('bank')->group(function () {

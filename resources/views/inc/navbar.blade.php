@@ -26,10 +26,7 @@
         </div>
     </div>
   </form>
-
-
   <!-- Right navbar links -->
-
   <ul class="navbar-nav ml-auto">
     
     <li class="nav-item">
@@ -40,12 +37,6 @@
     <li class="nav-item">
       <a class="nav-link" href="{{ route('change-password') }}">
         <i class="fas fa-key"></i>
-      </a>
-    </li>
-
-    <li class="nav-item">
-      <a class="nav-link" href="{{ route('profile') }}" role="button">
-        <i class="fas fa-user"></i>
       </a>
     </li>
     @can('view notification')

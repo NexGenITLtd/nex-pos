@@ -174,12 +174,7 @@ class InvoiceController extends Controller
 						// If phone number is valid, proceed with sending SMS
 						$smsSendController = new SmsSendController();
 						$smsSendController->send($request, $invoice);
-					} else {
-						// Invalid phone number format
-						// return back()->withErrors('Invalid phone number format.');
 					}
-				} else {
-					// return back()->withErrors('Phone number is required to send SMS.');
 				}
 			}
 			

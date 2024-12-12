@@ -54,6 +54,8 @@ class MenuSeeder extends Seeder
             ['name' => 'Sms Settings', 'route' => 'sms-settings.index', 'icon' => 'fas fa-sms'],
             ['name' => 'Owner Transactions', 'route' => 'owner-deposits.index', 'icon' => 'fas fa-wallet'],
             ['name' => 'Transactions', 'route' => 'transactions.index', 'icon' => 'fas fa-exchange-alt'],
+            ['name' => 'Sms History', 'route' => 'sms.index', 'icon' => 'fas fa-sms'],
+            ['name' => 'Website Setting', 'route' => 'site-info', 'icon' => 'fas fa-cog'],
             
         ];
 

@@ -293,7 +293,6 @@
 
                     <!-- Buttons -->
                     <div class="buttons no-print">
-                        <a href="#" class="btn btn-primary btn-sm" onclick="printDiv('invoic_div')">Print</a>
                         <a href="{{ route('invoice.pdf', $invoice->id) }}" class="btn btn-secondary btn-sm">Download</a>
                     </div>
                 </div>

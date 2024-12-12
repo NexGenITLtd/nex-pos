@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Invoice;
 use App\Models\SmsSetting;
+use App\Models\SmsHistory;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
@@ -22,10 +23,11 @@ class SmsSendController extends Controller
             }
 
             // Construct the SMS message
-            $message = "Invoice #{$invoice->id}\n"
+            $message = "{$invoice->store->name}\n"
+                     . "Invoice #{$invoice->id}\n"
                      . "Total: {$invoice->total_bill}\n"
                      . "Paid: {$invoice->paid_amount}\n"
-                     . "Due: {$invoice->due_amount}\n"
+                     . ($invoice->due_amount > 0 ? "Due: {$invoice->due_amount}\n" : "")
                      . "Thank you for your purchase!";
 
             // Calculate SMS parts and cost
@@ -34,38 +36,81 @@ class SmsSendController extends Controller
 
             // Check if balance is sufficient
             if ($smsSetting->balance < $smsCost) {
-                return response()->json(['error' => 'Insufficient balance to send SMS.'], 400);
+                return response()->json(['message' => 'Insufficient balance to send SMS.'], 400);
             }
 
-            // Send SMS via API
-            $response = Http::post($smsSetting->api_url, [
-                'api_key'    => $smsSetting->api_key,
-                'sender_id'  => $smsSetting->sender_id,
-                'to'         => $invoice->customer->phone, // Assuming the customer model has a phone number
-                'message'    => $message,
-            ]);
+            $response = $this->techno_bulk_sms(
+                $smsSetting->api_url, 
+                $smsSetting->api_key, 
+                $smsSetting->sender_id, 
+                $invoice->customer->phone, 
+                $message, 
+                $smsSetting->user_email
+            );
 
-            // Handle the response
-            if ($response->successful()) {
+            // Handle the response as an array
+            if ($response && isset($response['message']) && $response['message'] == 'Data Missing') {
+                return response()->json(['message' => 'Data Missing'], 400);
+            }
+
+            if ($response && isset($response['status']) && $response['status'] == 'success') {
                 // Deduct balance and increment SMS count
                 $smsSetting->balance -= $smsCost;
                 $smsSetting->sms_count += $smsParts;
                 $smsSetting->save();
 
-                Log::info('SMS sent successfully.', [
-                    'message' => $message,
-                    'cost' => $smsCost,
-                    'parts' => $smsParts,
-                    'response' => $response->body(),
+                // Log the SMS history
+                SmsHistory::create([
+                    'type'      => 'Invoice',
+                    'message'   => $message,
+                    'sms_parts' => $smsParts,
+                    'sms_cost'  => $smsCost,
+                    'response'  => json_encode($response),
+                    'recipient' => $invoice->customer->phone,
                 ]);
 
                 return response()->json(['success' => 'SMS sent successfully!']);
+            } else {
+                $errorMessage = $response ? json_encode($response) : '{"message":"No response"}';
+
+                // Log the SMS history even if it failed
+                SmsHistory::create([
+                    'type'      => 'Invoice',
+                    'message'   => $message,
+                    'sms_parts' => $smsParts,
+                    'sms_cost'  => $smsCost,
+                    'response'  => $errorMessage,
+                    'recipient' => $invoice->customer->phone,
+                ]);
+
+                return response()->json(['error' => $errorMessage], 500);
             }
-
-            return response()->json(['error' => 'Failed to send SMS.'], $response->status());
         }
+    }
 
-        return response()->json(['message' => 'SMS not sent (checkbox not checked).']);
+    function techno_bulk_sms($api_url, $api_key, $sender_id, $mobile_no, $message, $user_email)
+    {
+        $data = [
+            'api_key' => $api_key,
+            'sender_id' => $sender_id,
+            'message' => $message,
+            'mobile_no' => $mobile_no,
+            'user_email' => $user_email
+        ];
+
+        $curl = curl_init($api_url);
+        curl_setopt($curl, CURLOPT_POST, true);
+        curl_setopt($curl, CURLOPT_POSTFIELDS, $data);
+        curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, false);
+        curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, false);
+
+        $output = curl_exec($curl);
+        curl_close($curl);
+
+        return json_decode($output, true);
     }
 }
+
+
 
