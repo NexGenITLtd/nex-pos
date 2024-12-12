@@ -225,7 +225,7 @@
 												<option value="0">-- Select sellperson --</option>
 												@php
 												    $sell_person_id = 0;
-												$sell_persons = App\Models\User::where('store_id', Auth::user()->store_id)->where('role_id', 'sell_person')->get();
+												$sell_persons = App\Models\User::where('store_id', Auth::user()->store_id)->where('role_id', '4')->get();
 												@endphp
 												@foreach($sell_persons  as $key => $sell_person)
 										    	@php
