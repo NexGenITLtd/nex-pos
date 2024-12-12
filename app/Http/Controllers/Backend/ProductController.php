@@ -20,7 +20,7 @@ class ProductController extends Controller
     public function __construct()
     {
         $this->middleware('auth');
-        $this->middleware('permission:view product', ['only' => ['index','oneLineBarcode','multiLineBarcode']]);
+        $this->middleware('permission:view product', ['only' => ['index','generateBarcode']]);
         $this->middleware('permission:create product', ['only' => ['create','store']]);
         $this->middleware('permission:update product', ['only' => ['update','edit','toggleStatus']]);
         $this->middleware('permission:delete product', ['only' => ['destroy']]);
@@ -88,19 +88,19 @@ class ProductController extends Controller
         return response()->json(['success' => true]);
     }
 
-    // public function generateBarcode(Request $request, $id, $type = 'multi-line')
-    // {
+    public function generateBarcode(Request $request, $id, $type = 'multi-line')
+    {
         
-    //     $product = Product::FindOrFail($id);
-    //     $generator = new BarcodeGeneratorPNG();
-    //     // Generate barcode as base64 encoded image
-    //     $barcode = $generator->getBarcode($product->id, $generator::TYPE_CODE_128);
-    //     $barcodeBase64 = base64_encode($barcode);
-    //     // Store barcode in product object (or as a separate array)
-    //     $product->barcodeBase64 = $barcodeBase64;
-    //     $view = $type === 'multi-line' ? 'products.barcodes.multi-line' : 'products.barcodes.one-line';
-    //     return view($view, compact('product'));
-    // }
+        $product = Product::FindOrFail($id);
+        $generator = new BarcodeGeneratorPNG();
+        // Generate barcode as base64 encoded image
+        $barcode = $generator->getBarcode($product->id, $generator::TYPE_CODE_128);
+        $barcodeBase64 = base64_encode($barcode);
+        // Store barcode in product object (or as a separate array)
+        $product->barcodeBase64 = $barcodeBase64;
+        $view = $type === 'multi-line' ? 'products.barcodes.multi-line' : 'products.barcodes.one-line';
+        return view($view, compact('product'));
+    }
 
 
 

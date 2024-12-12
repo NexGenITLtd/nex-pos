@@ -141,7 +141,6 @@
                           {{ $availableQty }}
                       </td>
                       <td class="no-print">
-                        @can('update product')
                         <button class="btn {{ $product->status === 'active' ? 'btn-success' : 'btn-warning' }}  toggle-status btn-sm" 
                                 data-product-id="{{ $product->id }}" 
                                 data-status="{{ $product->status }}">
@@ -152,22 +151,19 @@
                         <span class="d-none status-badge badge {{ $product->status === 'active' ? 'badge-success' : 'badge-danger' }}">
                             {{ ucfirst($product->status) }}
                         </span>
-                        @endcan
+                        
                         
                     </td>
                       <td class="no-print">
-                          
-                        @can('update product')
+                        
                         <a href="{{ route('products.edit', $product->id) }}" class="btn btn-primary btn-sm">Edit</a>
-                        @endcan
-                        @can('delete product')
+                        
                           <form action="{{ route('products.destroy', $product->id) }}" method="POST" style="display: inline;">
                               @csrf
                               @method('DELETE')
                               <button type="submit" class="btn btn-danger btn-sm">Delete</button>
                           </form>
-                        @endcan
-                        @can('view product')
+                        
                         <span class="">
                           <a href="{{ route('barcode', ['id' => $product->id, 'type' => 'multi-line']) }}?qty={{ $availableQty }}" 
                            class="btn btn-info btn-sm" 
@@ -181,7 +177,6 @@
                             One Line Barcode
                         </a>
                         </span>
-                        @endcan
                       </td>
                   </tr>
               @endforeach

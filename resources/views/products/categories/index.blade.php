@@ -39,9 +39,8 @@
           <div class="card-header">
             <h3 class="card-title">Categories</h3>
             <div class="card-tools">
-              @can('create categories')
               <a href="{{route('categories.create')}}" class="btn btn-success float-right">Add New</a>
-              @endcan
+              
             </div>
           </div>
           <!-- /.card-header -->
@@ -64,16 +63,14 @@
                           <td>N/A</td>
                           
                           <td class="text-center">
-                              @can('update categories')
                                   <a href="{{ route('categories.edit', $category->id) }}" class="btn btn-primary btn-sm">Edit</a>
-                              @endcan
-                              @can('delete categories')
+                              
                                   <form action="{{ route('categories.destroy', $category->id) }}" method="POST" style="display:inline;">
                                       @csrf
                                       @method('DELETE')
                                       <button type="submit" class="btn btn-warning btn-sm">Delete</button>
                                   </form>
-                              @endcan
+                              
                           </td>
                       </tr>
 
@@ -83,16 +80,14 @@
                               <td>-- {{ $subcategory->name }}</td>
                               <td>{{ $category->name }}</td>
                               <td class="text-center">
-                                  @can('update categorires')
                                       <a href="{{ route('categories.edit', $subcategory->id) }}" class="btn btn-primary btn-sm">Edit</a>
-                                  @endcan
-                                  @can('delete categorires')
+                                  
                                       <form action="{{ route('categories.destroy', $subcategory->id) }}" method="POST" style="display:inline;">
                                           @csrf
                                           @method('DELETE')
                                           <button type="submit" class="btn btn-warning btn-sm">Delete</button>
                                       </form>
-                                  @endcan
+                                  
                               </td>
                           </tr>
                       @endforeach
