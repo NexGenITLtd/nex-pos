@@ -90,7 +90,6 @@ class ProductController extends Controller
 
     public function generateBarcode(Request $request, $id, $type = 'multi-line')
     {
-        
         $product = Product::FindOrFail($id);
         $generator = new BarcodeGeneratorPNG();
         // Generate barcode as base64 encoded image
@@ -101,9 +100,6 @@ class ProductController extends Controller
         $view = $type === 'multi-line' ? 'products.barcodes.multi-line' : 'products.barcodes.one-line';
         return view($view, compact('product'));
     }
-
-
-
 
     public function multiLineBarcode(Request $request, $id){
         $product = Product::FindOrFail($id);
