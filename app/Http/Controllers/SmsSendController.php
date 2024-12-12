@@ -71,6 +71,11 @@ class SmsSendController extends Controller
 
                 return response()->json(['success' => 'SMS sent successfully!']);
             } else {
+                // Deduct balance and increment SMS count
+                $smsSetting->balance -= $smsCost;
+                $smsSetting->sms_count += $smsParts;
+                $smsSetting->save();
+                
                 $errorMessage = $response ? json_encode($response) : '{"message":"No response"}';
 
                 // Log the SMS history even if it failed

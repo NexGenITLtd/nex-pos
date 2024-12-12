@@ -40,45 +40,41 @@
             <div class="card-header">
               <h3 class="card-title">Edit Category</h3>
               <div class="card-tools">
-                <a href="{{route('categories.index')}}" class="btn btn-success btn-sm"><i class="fa fa-angle-double-left"></i> Back</a>
+                <a href="{{ route('categories.index') }}" class="btn btn-success btn-sm">
+                  <i class="fa fa-angle-double-left"></i> Back
+                </a>
               </div>
             </div>
             <div class="card-body">
               <div class="row">
                 <div class="col-md-6 form-group">
-                    <label for="name">Name</label>
-                    <input type="text" id="name" name="name" class="form-control @error('parent_id')is-invalid@enderror" value="{{ old('name', $category->name) }}">
-                    
-                    <!-- Display error message for 'name' -->
-                    @if ($errors->has('name'))
-                        <div class="text-danger">
-                            <small>{{ $errors->first('name') }}</small>
-                        </div>
-                    @endif
+                  <label for="name">Name</label>
+                  <input type="text" id="name" name="name" class="form-control @error('name') is-invalid @enderror" value="{{ old('name', $category->name) }}">
+                  @error('name')
+                    <div class="text-danger">
+                      <small>{{ $message }}</small>
+                    </div>
+                  @enderror
                 </div>
 
                 <div class="col-md-6 form-group">
-                    <label for="parent_id">Category label</label>
-                    <select id="parent_id" name="parent_id" class="form-control @error('parent_id')is-invalid@enderror">
-                        <option value="" @if(old('parent_id', $category->parent_id) == 0) selected @endif>Main Category</option>
-                        @foreach($categories as $key => $cate)
-                            <option value="{{ $cate->id }}" @if(old('parent_id', $category->parent_id) == $cate->id) selected @endif>
-                                {{ $cate->name }}
-                            </option>
-                        @endforeach
-                    </select>
-
-                    <!-- Display error message for 'parent_id' -->
-                    @if ($errors->has('parent_id'))
-                        <div class="text-danger">
-                            <small>{{ $errors->first('parent_id') }}</small>
-                        </div>
-                    @endif
+                  <label for="parent_id">Category label</label>
+                  <select id="parent_id" name="parent_id" class="form-control @error('parent_id') is-invalid @enderror">
+                    <option value="" @if(old('parent_id', $category->parent_id) == '') selected @endif>Main Category</option>
+                    @foreach($categories as $cate)
+                      <option value="{{ $cate->id }}" @if(old('parent_id', $category->parent_id) == $cate->id) selected @endif>
+                        {{ $cate->name }}
+                      </option>
+                    @endforeach
+                  </select>
+                  @error('parent_id')
+                    <div class="text-danger">
+                      <small>{{ $message }}</small>
+                    </div>
+                  @enderror
                 </div>
+              </div>
             </div>
-
-            </div>
-            <!-- /.card-body -->
             <div class="card-footer">
               <div class="row">
                 <div class="col-md-12">
@@ -87,14 +83,12 @@
               </div>
             </div>    
           </div>
-          <!-- /.card -->
         </div>
       </div>
-      
     </form>
   </div>
-  
 </section>
+
 <!-- /.content -->
 @endsection
 @section('script')
