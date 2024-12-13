@@ -105,7 +105,7 @@
                     <div class="invoice-header">
                         
                         <div class="text-center">
-                            @if (!empty($invoice->store->logo) && file_exists(public_path('images/stores/' . $invoice->store->logo)))
+                            @if (!empty($invoice->store->logo) && file_exists('images/stores/' . $invoice->store->logo))
                                 <h3><img src="{{ asset('images/stores/' . $invoice->store->logo) }}" alt="{{ $invoice->store->name }}" class="logo"> {{ $invoice->store->name }}</h3>
                             @else
                                 <h5>{{ $invoice->store->name }}</h5>

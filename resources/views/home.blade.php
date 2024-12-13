@@ -207,40 +207,76 @@ $stores = App\Models\Store::get();
                                     </div>
                                 </div>
                             </div>
-
-                            <!-- payment details -->
+                        </div>
+                        <div class="row">
+                            <!-- Payment Details -->
                             <div class="col-12 col-sm-6 col-md-6">
-                                
                                 <div class="info-box">
                                     <div class="card w-100 p-0 m-0">
-                                        <div class="card-header text-white" style="background: linear-gradient(45deg, #6a11cb, #2575fc);">
-                                            <h3 class="card-title">Bank Account-Wise Payments</h3>
+                                        <div class="card-header">
+                                            <h3 class="card-title">Cash & Bank Account-Wise Payments</h3>
                                         </div>
                                         <!-- /.card-header -->
                                         <div class="card-body p-0 mb-0">
-                                            <ul class="list-group">
-                                                @foreach ($paymentsWithDetails as $payment)
-                                                    <li class="list-group-item d-flex justify-content-between align-items-center" 
-                                                        style="background: linear-gradient(90deg, {{ $loop->even ? '#ff9a9e' : '#a18cd1' }}, {{ $loop->even ? '#fad0c4' : '#fbc2eb' }}); color: #ffffff; border: none;">
-                                                        <span>
-                                                            <i class="fas fa-university"></i> 
-                                                            <strong>{{ $payment['bank_name'] }}</strong>
-                                                        </span>
-                                                        <span class="badge badge-pill" 
-                                                            style="background-color: {{ $payment['total_amount'] > 10000 ? '#c0392b' : '#16a085' }}; color: white; font-size: 1rem; padding: 10px;">
-                                                            {{ number_format($payment['total_amount'], 2) }}
-                                                        </span>
-                                                    </li>
-                                                @endforeach
-
-                                            </ul>
+                                            <table class="table table-bordered table-striped mb-0">
+                                                <thead>
+                                                    <tr>
+                                                        <th>Bank Name</th>
+                                                        <th>Total Amount</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    @foreach ($paymentsWithDetails as $payment)
+                                                        <tr>
+                                                            <td><i class="fas fa-university"></i> {{ $payment['bank_name'] }}</td>
+                                                            <td style="color: {{ $payment['total_amount'] > 10000 ? 'red' : 'green' }};">
+                                                                {{ number_format($payment['total_amount'], 2) }}
+                                                            </td>
+                                                        </tr>
+                                                    @endforeach
+                                                </tbody>
+                                            </table>
                                         </div>
                                         <!-- /.card-body -->
                                     </div>
-                                    <!-- /.card -->
-
                                 </div>
                             </div>
+
+                            <!-- Bank Current Balance -->
+                            <div class="col-12 col-sm-6 col-md-6">
+                                <div class="info-box">
+                                    <div class="card w-100 p-0 m-0">
+                                        <div class="card-header">
+                                            <h3 class="card-title">Cash & Bank Current Balance</h3>
+                                        </div>
+                                        <!-- /.card-header -->
+                                        <div class="card-body p-0 mb-0">
+                                            <table class="table table-bordered table-striped mb-0">
+                                                <thead>
+                                                    <tr>
+                                                        <th>Bank Name</th>
+                                                        <th>Account No</th>
+                                                        <th>Current Balance</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    @foreach ($bankAccounts as $bankAccount)
+                                                        <tr>
+                                                            <td><i class="fas fa-university"></i> {{ $bankAccount->bank_name }}</td>
+                                                            <td>{{ $bankAccount->account_no }}</td>
+                                                            <td style="color: {{ $bankAccount->current_balance > 10000 ? 'red' : 'green' }};">
+                                                                {{ number_format($bankAccount->current_balance, 2) }}
+                                                            </td>
+                                                        </tr>
+                                                    @endforeach
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                        <!-- /.card-body -->
+                                    </div>
+                                </div>
+                            </div>
+
                         </div>
                     </div>
 

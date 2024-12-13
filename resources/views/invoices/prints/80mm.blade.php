@@ -65,7 +65,7 @@
         <tbody>
             <tr>
                 <td style="text-align: left;">
-                    <h5 style="margin-bottom: 0">@if (!empty($invoice->store->logo) && file_exists(public_path('images/stores/' . $invoice->store->logo)))
+                    <h5 style="margin-bottom: 0">@if (!empty($invoice->store->logo) && file_exists('images/stores/' . $invoice->store->logo))
                     <img src="{{ asset('images/stores/' . $invoice->store->logo) }}" alt="{{ $invoice->store->name }}" class="logo" style="max-width: 35px; height: auto;">@endif{{ $invoice->store->name }}</h5>
                 </td>
                 <td style="text-align: right;">

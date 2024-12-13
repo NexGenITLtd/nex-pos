@@ -165,6 +165,14 @@ class HomeController extends Controller
         }
         $total_salary = $salaryQuery->sum('amount');
 
+        // Fetch bank account
+        $bankAccountQuery = BankAccount::query();
+        if ($store_id) {
+            $bankAccountQuery->where('store_id', $store_id);
+        }
+        $bankAccounts = $bankAccountQuery->get();
+
+
         // Calculate cash in hand: $total_sales - ($total_due + $total_supplier_payment + $total_expense + $total_salary);
         $cash_in_hand = $total_sales - ($total_due + $total_supplier_payment + $total_expense + $total_salary);
 
@@ -181,7 +189,8 @@ class HomeController extends Controller
             'cash_in_hand',
             'cardHeader', // Add the card header to the view
             'store_id', // to retain the store filter in the view
-            'paymentsWithDetails' // Include payments grouped by bank account in the view
+            'paymentsWithDetails',
+            'bankAccounts'
         ));
     }
 
