@@ -214,7 +214,7 @@ $stores = App\Models\Store::get();
                                 <div class="info-box">
                                     <div class="card w-100 p-0 m-0">
                                         <div class="card-header">
-                                            <h3 class="card-title">Cash & Bank Account-Wise Payments</h3>
+                                            <h3 class="card-title"><i class="fas fa-university"></i>  Cash & Bank Account-Wise Payments</h3>
                                         </div>
                                         <!-- /.card-header -->
                                         <div class="card-body p-0 mb-0">
@@ -228,7 +228,7 @@ $stores = App\Models\Store::get();
                                                 <tbody>
                                                     @foreach ($paymentsWithDetails as $payment)
                                                         <tr>
-                                                            <td><i class="fas fa-university"></i> {{ $payment['bank_name'] }}</td>
+                                                            <td>{{ $payment['bank_name'] }}</td>
                                                             <td style="color: {{ $payment['total_amount'] > 10000 ? 'red' : 'green' }};">
                                                                 {{ number_format($payment['total_amount'], 2) }}
                                                             </td>
@@ -247,7 +247,7 @@ $stores = App\Models\Store::get();
                                 <div class="info-box">
                                     <div class="card w-100 p-0 m-0">
                                         <div class="card-header">
-                                            <h3 class="card-title">Cash & Bank Current Balance</h3>
+                                            <h3 class="card-title"><i class="fas fa-university"></i> Cash & Bank Current Balance</h3>
                                         </div>
                                         <!-- /.card-header -->
                                         <div class="card-body p-0 mb-0">
@@ -262,7 +262,7 @@ $stores = App\Models\Store::get();
                                                 <tbody>
                                                     @foreach ($bankAccounts as $bankAccount)
                                                         <tr>
-                                                            <td><i class="fas fa-university"></i> {{ $bankAccount->bank_name }}</td>
+                                                            <td>{{ $bankAccount->bank_name }}</td>
                                                             <td>{{ $bankAccount->account_no }}</td>
                                                             <td style="color: {{ $bankAccount->current_balance > 10000 ? 'red' : 'green' }};">
                                                                 {{ number_format($bankAccount->current_balance, 2) }}
