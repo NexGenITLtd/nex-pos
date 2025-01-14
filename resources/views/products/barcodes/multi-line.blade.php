@@ -125,7 +125,7 @@
             <!-- Product Details -->
             <div class="product-details">
                 <span class="product-code">{{ $product->id }}</span>
-                <span class="product-price">Price: {{ number_format($product->price, 2) }} {{ $website_info->currency }}</span>
+                <span class="product-price">Price: {{ number_format($product->latestStockIn->sell_price, 2) }} {{ $website_info->currency }}</span>
             </div>
         </div>
         @endfor

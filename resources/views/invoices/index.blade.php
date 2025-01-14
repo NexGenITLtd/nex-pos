@@ -152,6 +152,7 @@
 					    <hr>
 					    <h5 class="card-title">Invoice Summary</h5>
 					    @php
+					        $totalInvoice = $invoices->count();
 					        $totalBill = $invoices->sum('total_bill');
 					        $totalProductReturn = $invoices->sum('product_return');
 					        $totalPaid = $invoices->sum('paid_amount');
@@ -163,21 +164,23 @@
 					    <table class="table table-bordered table-sm">
 					        <thead>
 					            <tr>
+					                <th>Total Invoice</th>
 					                <th>Total Bill</th>
 					                <th>Total Product Return</th>
 					                <th>Total Paid</th>
 					                <th>Total Due</th>
-					                <th>Total Discount(%)</th>
+					                <th>Average Discount(%)</th>
 					                <th>Total Less Amount</th>
 					            </tr>
 					        </thead>
 					        <tbody>
 					            <tr>
+					                <td>{{ $totalInvoice }}</td>
 					                <td>{{ number_format($totalBill, 2) }}</td>
 					                <td>{{ number_format($totalProductReturn, 2) }}</td>
 					                <td>{{ number_format($totalPaid, 2) }}</td>
 					                <td>{{ number_format($totalDue, 2) }}</td>
-					                <td>{{ number_format($totalDiscount, 2) }}</td>
+					                <td>{{ number_format(($totalDiscount/$totalInvoice), 2) }}</td>
 					                <td>{{ number_format($totalLess, 2) }}</td>
 					            </tr>
 					        </tbody>

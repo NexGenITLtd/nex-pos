@@ -29,4 +29,8 @@ class Product extends Model
     {
         return $this->hasMany(ReturnSellProduct::class, 'product_id');
     }
+    public function latestStockIn()
+    {
+        return $this->hasOne(StockIn::class)->latestOfMany();
+    }
 }

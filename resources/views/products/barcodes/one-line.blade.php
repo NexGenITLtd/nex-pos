@@ -65,7 +65,7 @@
                     <span style="font-size: 11px;">{{ $product->name }}</span><br>
                     <img src="data:image/png;base64,{{ $product->barcodeBase64 }}" 
                          alt="Barcode for {{ $product->name }}" /><br>
-                    <b>Price: {{ number_format($product->price, 2) }} {{ $website_info->currency }}</b>
+                    <b>Price: {{ number_format($product->latestStockIn->sell_price, 2) }} {{ $website_info->currency }}</b>
                 </span>
             </p>
         @endfor

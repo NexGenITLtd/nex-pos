@@ -72,9 +72,8 @@
                       <th>#</th>
                         <th>Code</th>
                         <th>Name</th>
-                        <th>Category</th>
-                        <th>Sub Category</th>
-                        <th>Brand</th>
+                        <th>Purchase Value</th>
+                        <th>Sale Value</th>
                         <th>Total Stock</th>
                         <th>Total Sales</th>
                         <th>Available Qty</th>
@@ -88,11 +87,8 @@
                     <td>{{ $loop->iteration }}</td>
                       <td>{{ $product->id }}</td>
                       <td>{{ $product->name }}</td>
-                      <td>{{ $product->category ? $product->category->name : 'No Category' }}</td>
-                      <td>{{ $product->subcategory ? $product->subcategory->name : 'No Subcategory' }}</td>
-                      <td>{{ $product->brand ? $product->brand->name : 'No Brand' }}</td>
-
-
+                      <td>{{ $product->latestStockIn->purchase_price }}</td>
+                      <td>{{ $product->latestStockIn->sell_price }}</td>
                       @php
                           // Get the store_id based on user role or request
                           $storeId = (Auth::user()->role == 'station') ? Auth::user()->store_id : request('store_id');
