@@ -93,7 +93,7 @@ class ReportController extends Controller
         $totalInvoiceSales = 0;
         $totalInvoiceReturnSell = 0;
         $totalInvoiceDue = 0;
-        $totalInvoiceProfit = 0;
+        $totalInvoiceSell = 0;
 
         // Fetch total invoices based on the date range and store
         $invoicesQuery = Invoice::with('sellProducts', 'returnSellProducts')  // Add the returnSellProducts relationship if it exists
@@ -124,7 +124,7 @@ class ReportController extends Controller
 
 
         // Calculate total profit (Sales - Purchase Price) — Ensure you have the total purchase price of sold products
-        $totalInvoiceProfit = ($totalInvoiceSales + $totalInvoiceReturnSell) - $totalSoldPurchasePrice;
+        $totalInvoiceSell = ($totalInvoiceSales + $totalInvoiceReturnSell) - $totalSoldPurchasePrice;
         // end invoice
 
         // product
@@ -148,25 +148,36 @@ class ReportController extends Controller
         $totalStock = 0;
         $totalSold = 0;
         $totalReturned = 0;
-        $totalStockValue = 0;
+        $totalStockInPurchaseValue = 0;
+
+        $totalStockInSellValue = 0;
+
         $totalSellValue = 0;
-        $totalReturnValue = 0;
+        $totalReturnPurchaseValue = 0;
         $totalAvailableQty = 0;
-        $totalAvailableStockValue = 0;
-        $totalSoldPurchasePrice = 0; // Initialize total purchase price for sold products
-        $totalAvailableStockPurchaseCost = 0; // Initialize total purchase cost of available stock
+        $totalAvailableStockInValue = 0;
+        $totalSoldPurchasePrice = 0;
+        $totalReturnSellValue = 0;
+        $totalAvailableStockPurchaseCost = 0;
+        $totalAvailableStockAfterSellValue = 0;
 
         foreach ($products as $product) {
             // Calculate total stock and stock value (purchase price * qty)
             $stockQty = $product->stockIns->sum('qty');
             $totalStock += $stockQty;
-            $totalStockValue += $product->stockIns->sum(function ($stockIn) {
-                return $stockIn->purchase_price * $stockIn->qty; // stock value (purchase price * qty)
+
+            $totalStockInPurchaseValue += $product->stockIns->sum(function ($stockIn) {
+                return $stockIn->purchase_price * $stockIn->qty; // purchase stock value (purchase price * qty)
+            });
+
+            $totalStockInSellValue += $product->stockIns->sum(function ($stockIn) {
+                return $stockIn->sell_price * $stockIn->qty; // purchase stock value (sell price * qty)
             });
 
             // Calculate total sold and sell value (sell price * qty)
             $soldQty = $product->sellProducts->sum('qty');
             $totalSold += $soldQty;
+
             $totalSellValue += $product->sellProducts->sum(function ($sellProduct) {
                 return $sellProduct->sell_price * $sellProduct->qty; // sell value (sell price * qty)
             });
@@ -179,8 +190,13 @@ class ReportController extends Controller
             // Calculate total returned and return value (purchase price * qty)
             $returnedQty = $product->returnSellProducts->sum('qty');
             $totalReturned += $returnedQty;
-            $totalReturnValue += $product->returnSellProducts->sum(function ($returnProduct) {
+
+            $totalReturnPurchaseValue += $product->returnSellProducts->sum(function ($returnProduct) {
                 return $returnProduct->purchase_price * $returnProduct->qty; // return value (purchase price * qty)
+            });
+
+            $totalReturnSellValue += $product->returnSellProducts->sum(function ($returnProduct) {
+                return $returnProduct->sell_price * $returnProduct->qty; // return value (sell price * qty)
             });
 
             // Calculate available quantity
@@ -188,17 +204,14 @@ class ReportController extends Controller
             $totalAvailableQty += $availableQty; // Sum up available quantities
 
             // Calculate available stock value
-            $availableValue = $totalStockValue - $totalSellValue + $totalReturnValue;
-            $totalAvailableStockValue += $availableValue; // Sum up available value
+            $totalAvailableStockInValue = ($totalStockInPurchaseValue - $totalSellValue) + $totalReturnPurchaseValue;
+            
 
             // Calculate total available stock purchase cost
             $totalAvailableStockPurchaseCost += $product->stockIns->sum(function ($stockIn) {
                 return $stockIn->purchase_price * $stockIn->qty; // purchase price of available stock
             });
         }
-
-        // Calculate Total Available Stock Profit
-        $totalAvailableStockProfit = $totalAvailableStockValue - $totalAvailableStockPurchaseCost;
         // end product
 
 
@@ -289,20 +302,24 @@ class ReportController extends Controller
             'totalStock', 
             'totalSold', 
             'totalReturned', 
-            'totalStockValue', 
+            'totalStockInPurchaseValue',
+            
+            'totalStockInSellValue',
+            
             'totalSellValue', 
-            'totalReturnValue', 
+            'totalReturnPurchaseValue',
+            'totalReturnSellValue', 
             'totalAvailableQty',
-            'totalAvailableStockValue',
+            'totalAvailableStockInValue',
+            'totalAvailableStockAfterSellValue',
             'totalSoldPurchasePrice',
-            'totalAvailableStockProfit', // Include total available stock profit
 
             // invoice 
             'totalInvoices',
             'totalInvoiceSales',
             'totalInvoiceReturnSell',
             'totalInvoiceDue',
-            'totalInvoiceProfit',
+            'totalInvoiceSell',
 
             // supplier
             'suppliers',

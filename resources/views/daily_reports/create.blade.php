@@ -122,16 +122,22 @@
 							            </td>
 							        </tr>
 							        @can('show profit')
-							        <tr>
-							            <td>Total Profit</td>
-							            <td>
-							                <input type="number" class="form-control text-center" name="total_profit" 
-							                       v-model="total_profit" 
-							                       value="{{ old('total_profit', $total_profit) }}" 
-							                       placeholder="{{ $website_info->currency }}" readonly />
-							            </td>
-							        </tr>
-							        @endcan
+									<tr>
+										<td>Total Profit</td>
+										<td>
+											<input type="number" class="form-control text-center" name="total_profit" 
+												v-model="total_profit" 
+												value="{{ old('total_profit', $total_profit) }}" 
+												placeholder="{{ $website_info->currency }}" readonly />
+										</td>
+									</tr>
+									@endcan
+
+									@cannot('show profit')
+									<input type="hidden" name="total_profit" v-model="total_profit" 
+										value="{{ old('total_profit', $total_profit) }}" />
+									@endcannot
+
 							        <!-- Cash Management Section -->
 							        <tr><th colspan="2" class="text-center bg-warning text-dark">Cash Management</th></tr>
 							        <tr>
@@ -177,6 +183,12 @@
 							            </td>
 							        </tr>
 							        @endcan
+
+									@cannot('show profit')
+									<input type="hidden" name="total_purchase_price" 
+							                       v-model="total_purchase_price" 
+							                       value="{{ old('total_purchase_price', $total_purchase_price) }}" />
+									@endcannot
 
 							        <!-- Expense and Payments -->
 							        <tr><th colspan="2" class="text-center bg-danger text-white">Expenses and Payments</th></tr>
@@ -264,6 +276,14 @@
 							            </td>
 							        </tr>
 							        @endcan
+
+									@cannot('show profit')
+									<input type="hidden" name="net_profit" 
+							                       @input="calculation()" 
+							                       v-model="net_profit" 
+							                       value="{{ old('net_profit', 0) }}" />
+									@endcannot
+
 							        <!-- Cash in Hand for Next Day Section -->
 							        <tr><th colspan="2" class="text-center bg-info text-white">Cash in Hand for Next Day</th></tr>
 							        <tr>

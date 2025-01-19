@@ -35,7 +35,7 @@
     <div class="col-md-12">
       <div class="card card-primary">
         <div class="card-header">
-          <h3 class="card-title">Direct Product Stock</h3>
+          <h3 class="card-title">Add Product Stock</h3>
           <div class="card-tools">
             <button @click="addNewRow" class="btn btn-primary">New Row</button>
             <a href="{{ route('products.index') }}" class="btn btn-success"><i class="fa fa-angle-double-left"></i> Back</a>
@@ -275,7 +275,7 @@
       const alertDate = alertDateObj.toISOString().split('T')[0];
 
       this.rows.unshift({
-        product_name: `Item ${this.rows.length + 1}`,
+        product_name: ``,
         product_category_id: null,
         product_sub_category_id: null,
         store_id: null,

@@ -64,11 +64,15 @@
                             @endforeach
                         </select>
                     </div>
-                    <div class="col-md-3">
-                        <label for="date" class="form-label">Date</label>
-                        <input type="date" name="date" id="date" class="form-control" value="{{ request('date') }}">
+                    <div class="col-md-2">
+                        <label for="start_date" class="form-label">Start Date</label>
+                        <input type="date" name="start_date" id="start_date" class="form-control" value="{{ request('start_date') }}">
                     </div>
-                    <div class="col-md-3 align-self-end">
+                    <div class="col-md-2">
+                        <label for="end_date" class="form-label">End Date</label>
+                        <input type="date" name="end_date" id="end_date" class="form-control" value="{{ request('end_date') }}">
+                    </div>
+                    <div class="col-md-2 align-self-end">
                         <button type="submit" class="btn btn-primary w-100">Filter</button>
                     </div>
                 </div>

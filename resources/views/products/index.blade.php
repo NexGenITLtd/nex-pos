@@ -56,7 +56,7 @@
                 <a href="#" onclick="printDiv('app')" class="btn btn-sm btn-secondary ml-2">Print</a>
                 @can('create product')
                 <a href="{{route('products.create')}}" class="btn btn-sm btn-success ml-2">Add New</a>
-                <a href="{{route('product-stock-ins.direct')}}" class="btn btn-sm btn-warning ml-2">Direct Stock In</a>
+                <a href="{{route('product-stock-ins.direct')}}" class="btn btn-sm btn-warning ml-2">Add Stock In</a>
                 @endcan
             </form>
             
@@ -87,7 +87,7 @@
                     <td>{{ $loop->iteration }}</td>
                       <td>{{ $product->id }}</td>
                       <td>{{ $product->name }}</td>
-                      <td>{{ $product->latestStockIn->purchase_price }}</td>
+                      <td>@can('show profit'){{ $product->latestStockIn->purchase_price }}@endcan</td>
                       <td>{{ $product->latestStockIn->sell_price }}</td>
                       @php
                           // Get the store_id based on user role or request

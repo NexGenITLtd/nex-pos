@@ -118,9 +118,14 @@
                                                     <td>Total quantity of items currently in stock.</td>
                                                 </tr>
                                                 <tr>
-                                                    <td>Total Stock Value</td>
-                                                    <td>{{ $website_info->currency }} {{ number_format($totalStockValue, 2) }}</td>
-                                                    <td>Total value of stock (Purchase Price x Quantity).</td>
+                                                    <td>Total Stock-in Purchase Value</td>
+                                                    <td>{{ $website_info->currency }} {{ number_format($totalStockInPurchaseValue, 2) }}</td>
+                                                    <td>Total purchase value of stock-in (Purchase Price x Quantity).</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Total Stock-in Sell Value</td>
+                                                    <td>{{ $website_info->currency }} {{ number_format($totalStockInSellValue, 2) }}</td>
+                                                    <td>Total sell value of stock-in (Sell Price x Quantity).</td>
                                                 </tr>
                                                 <tr>
                                                     <td>Total Sold</td>
@@ -143,9 +148,14 @@
                                                     <td>Total quantity of items returned by customers.</td>
                                                 </tr>
                                                 <tr>
-                                                    <td>Total Return Value</td>
-                                                    <td>{{ $website_info->currency }} {{ number_format($totalReturnValue, 2) }}</td>
+                                                    <td>Total Return Purchase Value</td>
+                                                    <td>{{ $website_info->currency }} {{ number_format($totalReturnPurchaseValue, 2) }}</td>
                                                     <td>Total value of returned items (Purchase Price x Quantity).</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Total Return Sell Value</td>
+                                                    <td>{{ $website_info->currency }} {{ number_format($totalReturnSellValue, 2) }}</td>
+                                                    <td>Total value of returned items (Sell Price x Quantity).</td>
                                                 </tr>
                                                 <tr>
                                                     <td>Total Available Quantity</td>
@@ -153,14 +163,14 @@
                                                     <td>Net available stock after sales and returns.</td>
                                                 </tr>
                                                 <tr>
-                                                    <td>Total Available Stock Value</td>
-                                                    <td>{{ $website_info->currency }} {{ number_format($totalAvailableStockValue, 2) }}</td>
-                                                    <td>Value of all available stock.</td>
+                                                    <td>Total Available Stock-in Purchase Value</td>
+                                                    <td>{{ $website_info->currency }} {{ number_format($totalAvailableStockInValue, 2) }}</td>
+                                                    <td>Purchase value of all available stock-in.</td>
                                                 </tr>
                                                 <tr>
-                                                    <td>Total Available Stock Profit</td>
-                                                    <td>{{ $website_info->currency }} {{ number_format($totalAvailableStockProfit, 2) }}</td>
-                                                    <td>Profit from the available stock (Stock Value - Purchase Cost).</td>
+                                                    <td>Total Available Stock Sell Value</td>
+                                                    <td>{{ $website_info->currency }} {{ number_format($totalAvailableStockAfterSellValue, 2) }}</td>
+                                                    <td>Available stock sell value.</td>
                                                 </tr>
                                             </tbody>
                                         </table>
@@ -198,24 +208,24 @@
                                                 <td>Total number of invoices generated.</td>
                                             </tr>
                                             <tr>
-                                                <td>Total Sales Amount</td>
+                                                <td>Total Sales Value</td>
                                                 <td>{{ $website_info->currency }} {{ number_format($totalInvoiceSales, 2) }}</td>
                                                 <td>Total amount from all sales invoices.</td>
                                             </tr>
                                             <tr>
-                                                <td>Total Returned Products</td>
+                                                <td>Total Returned Value</td>
                                                 <td>{{ $website_info->currency }} {{ number_format($totalInvoiceReturnSell, 2) }}</td>
                                                 <td>Total value of returned products from invoices.</td>
                                             </tr>
                                             <tr>
-                                                <td>Total Due Amount</td>
+                                                <td>Total Due Value</td>
                                                 <td>{{ $website_info->currency }} {{ number_format($totalInvoiceDue, 2) }}</td>
                                                 <td>Total amount due for unpaid invoices.</td>
                                             </tr>
                                             <tr>
-                                                <td>Net Profit</td>
-                                                <td>{{ $website_info->currency }} {{ number_format($totalInvoiceProfit, 2) }}</td>
-                                                <td>Total profit from all invoices after returns and costs.</td>
+                                                <td>Net Sell Value</td>
+                                                <td>{{ $website_info->currency }} {{ number_format($totalInvoiceSell, 2) }}</td>
+                                                <td>Total sell from all invoices after returns and costs.</td>
                                             </tr>
                                         </tbody>
                                     </table>

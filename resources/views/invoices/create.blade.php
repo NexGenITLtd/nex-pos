@@ -629,7 +629,7 @@
 	      const alertDate = alertDateObj.toISOString().split('T')[0];
 
 	      this.rows.unshift({
-	        product_name: `Item ${this.rows.length + 1}`,
+	        product_name: ``,
 	        supplier_id: '1',
 	        store_id: "{{Auth::user()->store_id}}",
 	        rack_id: '',

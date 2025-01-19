@@ -110,6 +110,7 @@
 					            <tr>
 					                <th>Invoice ID</th>
 					                <th>Customer</th>
+					                <th>Product Details</th>
 					                <th>Total Bill</th>
 					                <th>Total Return</th>
 					                <th>Paid Amount</th>
@@ -128,6 +129,14 @@
 					            <tr>
 					                <td><a href="{{ route('invoices.show',$invoice->id) }}">{{ $invoice->id }}</a></td>
 					                <td>{{ $invoice->customer_id }}-{{ $invoice->customer->name ? $invoice->customer->name : '' }}</td>
+                                    <td>
+                                        @foreach($invoice->sellProducts as $sellProduct)
+                                        {{ $sellProduct->product_name }} ({{ $sellProduct->product_id  }}) x {{ $sellProduct->qty }} - {{ $sellProduct->sell_price }} {{ $website_info->currency }} <br>
+                                        @endforeach
+                                        @foreach($invoice->returnSellProducts as $sellProduct)
+                                        <span class="text-warning">{{ $sellProduct->product_name }} ({{ $sellProduct->product_id  }}) x {{ $sellProduct->qty }} - {{ $sellProduct->sell_price }} {{ $website_info->currency }} <br></span>
+                                        @endforeach
+                                    </td>
 					                <td>{{ number_format($invoice->total_bill, 2) }}</td>
 					                <td>{{ number_format($invoice->product_return, 2) }}</td>
 					                <td>{{ number_format($invoice->paid_amount, 2) }}</td>
@@ -137,7 +146,7 @@
 					                <td>{{ $invoice->manager_id }}-{{ $invoice->manager->name ?? 'No Manager Assigned' }}</td>
 					                <td>{{ $invoice->sell_person_id }}-{{ $invoice->sell_person->name ?? 'No Seller Assigned' }}</td>
 					                <td>{{ $invoice->store_id }}-{{ $invoice->store->name ?? 'N/A' }}</td>
-					                <td>{{ $invoice->created_at->format('Y-m-d') }}</td>
+					                <td>{{ $invoice->created_at->format('Y-m-d h:i:s a') }}</td>
 					                <td class="text-center no-print">@can('update invoice')<a href="{{ route('invoices.edit', $invoice->id) }}" class="btn btn-primary btn-sm">Edit</a>@endcan @can('delete invoice')<a href="{{route('delete-invoice', $invoice->id)}}"class="btn btn-danger btn-sm">Delete</a>@endcan</td>
 					            </tr>
 					            @empty
