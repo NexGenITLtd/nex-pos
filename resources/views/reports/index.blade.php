@@ -158,6 +158,16 @@
                                                     <td>Total value of returned items (Sell Price x Quantity).</td>
                                                 </tr>
                                                 <tr>
+                                                    <td>Net Purchase Value</td>
+                                                    <td>{{ $website_info->currency }} {{ number_format($totalSoldPurchasePrice-$totalReturnPurchaseValue, 2) }}</td>
+                                                    <td>Total profit from all invoices (sell - cost).</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Net Sell Value</td>
+                                                    <td>{{ $website_info->currency }} {{ number_format($totalSellValue-$totalReturnSellValue, 2) }}</td>
+                                                    <td>(Total Sold Value - Total Return Sell Value)</td>
+                                                </tr>
+                                                <tr>
                                                     <td>Total Available Quantity</td>
                                                     <td>{{ $totalAvailableQty }}</td>
                                                     <td>Net available stock after sales and returns.</td>
@@ -224,8 +234,18 @@
                                             </tr>
                                             <tr>
                                                 <td>Net Sell Value</td>
-                                                <td>{{ $website_info->currency }} {{ number_format($totalInvoiceSell, 2) }}</td>
+                                                <td>{{ $website_info->currency }} {{ number_format($totalInvoiceSales, 2) }}</td>
                                                 <td>Total sell from all invoices after returns and costs.</td>
+                                            </tr>
+                                            <tr>
+                                                <td>Net Purchase Value</td>
+                                                <td>{{ $website_info->currency }} {{ number_format($totalInvoiceSoldPurchasePrice, 2) }}</td>
+                                                <td>Total Purchase Costs.</td>
+                                            </tr>
+                                            <tr>
+                                                <td>Profit Value</td>
+                                                <td>{{ $website_info->currency }} {{ number_format($totalInvoiceSales-$totalInvoiceSoldPurchasePrice, 2) }}</td>
+                                                <td>Total profit from all invoices (sell - cost).</td>
                                             </tr>
                                         </tbody>
                                     </table>

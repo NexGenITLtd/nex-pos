@@ -74,6 +74,7 @@
                         <th>Name</th>
                         <th>Purchase Value</th>
                         <th>Sale Value</th>
+                        <th>Extra</th>
                         <th>Total Stock</th>
                         <th>Total Sales</th>
                         <th>Available Qty</th>
@@ -89,6 +90,17 @@
                       <td>{{ $product->name }}</td>
                       <td>@can('show profit'){{ $product->latestStockIn->purchase_price }}@endcan</td>
                       <td>{{ $product->latestStockIn->sell_price }}</td>
+                      <td>
+                        @php
+                        $extra = 0;
+                        if ($product->latestStockIn->purchase_price > 0) {
+                            $extra = (($product->latestStockIn->sell_price - $product->latestStockIn->purchase_price) / $product->latestStockIn->purchase_price) * 100;
+                        }
+                        @endphp
+                        @can('show profit')
+                        {{ number_format($extra, 2) }}%
+                        @endcan
+                      </td>
                       @php
                           // Get the store_id based on user role or request
                           $storeId = (Auth::user()->role == 'station') ? Auth::user()->store_id : request('store_id');

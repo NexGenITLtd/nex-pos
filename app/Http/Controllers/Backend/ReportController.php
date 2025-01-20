@@ -85,46 +85,75 @@ class ReportController extends Controller
             $cardHeader .= ' for All Stores';
         }
 
-        
-        
-
         // invoice
         $totalInvoices = 0;
         $totalInvoiceSales = 0;
         $totalInvoiceReturnSell = 0;
         $totalInvoiceDue = 0;
-        $totalInvoiceSell = 0;
+        $totalInvoiceSoldPurchasePrice;
 
-        // Fetch total invoices based on the date range and store
-        $invoicesQuery = Invoice::with('sellProducts', 'returnSellProducts')  // Add the returnSellProducts relationship if it exists
-            ->whereBetween('created_at', [$startDate, $endDate]);
+        // // Fetch total invoices based on the date range and store
+        // $invoicesQuery = Invoice::with('sellProducts', 'returnSellProducts')  // Add the returnSellProducts relationship if it exists
+        //     ->whereBetween('created_at', [$startDate, $endDate]);
 
-        // If store_id is provided, filter by store
-        if ($store_id) {
-            $invoicesQuery->where('store_id', $store_id);
-        }
+        // // If store_id is provided, filter by store
+        // if ($store_id) {
+        //     $invoicesQuery->where('store_id', $store_id);
+        // }
 
-        // Calculate total invoices
-        $totalInvoices = $invoicesQuery->count();
+        // // Calculate total invoices
+        // $totalInvoices = $invoicesQuery->count();
 
-        // Calculate total sales (sum of total_bill across all invoices)
-        $totalInvoiceSales = $invoicesQuery->sum('total_bill');
+        // // Calculate total sales (sum of total_bill across all invoices)
+        // $totalInvoiceSales = $invoicesQuery->sum('total_bill');
 
-        // Fetch total returned product amount from invoices (if `product_return` is a field in the invoices table, adjust if necessary)
-        $totalInvoiceReturnSell = $invoicesQuery->sum('product_return');  // Assuming `product_return` is stored as a column, otherwise use a relationship
+        // // Fetch total returned product amount from invoices (if `product_return` is a field in the invoices table, adjust if necessary)
+        // $totalInvoiceReturnSell = $invoicesQuery->sum('product_return');  // Assuming `product_return` is stored as a column, otherwise use a relationship
 
-        // Fetch total due amount (only sum invoices where due_amount is greater than 0)
-        $totalInvoiceDue = $invoicesQuery->where('due_amount', '>', 0)->sum('due_amount');
+        // // Fetch total due amount (only sum invoices where due_amount is greater than 0)
+        // $totalInvoiceDue = $invoicesQuery->where('due_amount', '>', 0)->sum('due_amount');
 
-        $totalSoldPurchasePrice = $invoicesQuery->with('sellProducts')->get()->sum(function ($invoice) {
-            return $invoice->sellProducts->sum(function ($sellProduct) {
-                return $sellProduct->purchase_price * $sellProduct->qty;
-            });
-        });
+        // $totalInvoiceSoldPurchasePrice = $invoicesQuery->with('sellProducts')->get()->sum(function ($invoice) {
+        //     return $invoice->sellProducts->sum(function ($sellProduct) {
+        //         return $sellProduct->purchase_price * $sellProduct->qty;
+        //     });
+        // });
+        
+    // Fetch total invoices based on the date range and store
+    $invoicesQuery = Invoice::with(['sellProducts', 'returnSellProducts'])  // Ensure relationships are eagerly loaded
+        ->whereBetween('created_at', [$startDate, $endDate]);
+
+    // If store_id is provided, filter by store
+    if ($store_id) {
+        $invoicesQuery->where('store_id', $store_id);
+    }
+
+    // Fetch the invoices once to avoid duplicate queries
+    $invoices = $invoicesQuery->get();
+
+    // Calculate total invoices
+    $totalInvoices = $invoices->count();
+
+    // Calculate total sales (sum of total_bill across all invoices)
+    $totalInvoiceSales = $invoices->sum('total_bill');
+
+    // Fetch total returned product amount (if `product_return` is a field in the invoices table)
+    $totalInvoiceReturnSell = $invoices->sum('product_return'); // Adjust based on your schema
+
+    // Fetch total due amount (only sum invoices where due_amount is greater than 0)
+    $totalInvoiceDue = $invoices->where('due_amount', '>', 0)->sum('due_amount');
+
+    // Calculate total purchase price of sold products
+    $totalInvoiceSoldPurchasePrice = $invoices->flatMap(fn($invoice) => $invoice->sellProducts)
+        ->sum(fn($sellProduct) => $sellProduct->purchase_price * $sellProduct->qty);
+
+    // Subtract the total purchase price of returned products
+    $totalReturnedPurchasePrice = $invoices->flatMap(fn($invoice) => $invoice->returnSellProducts)
+        ->sum(fn($returnSellProduct) => $returnSellProduct->purchase_price * $returnSellProduct->qty);
+    $totalInvoiceSoldPurchasePrice -= $totalReturnedPurchasePrice;
 
 
-        // Calculate total profit (Sales - Purchase Price) — Ensure you have the total purchase price of sold products
-        $totalInvoiceSell = ($totalInvoiceSales + $totalInvoiceReturnSell) - $totalSoldPurchasePrice;
+
         // end invoice
 
         // product
@@ -204,14 +233,18 @@ class ReportController extends Controller
             $totalAvailableQty += $availableQty; // Sum up available quantities
 
             // Calculate available stock value
-            $totalAvailableStockInValue = ($totalStockInPurchaseValue - $totalSellValue) + $totalReturnPurchaseValue;
+            $totalAvailableStockInValue = ($totalStockInPurchaseValue - $totalSoldPurchasePrice)+$totalReturnPurchaseValue;
             
 
             // Calculate total available stock purchase cost
-            $totalAvailableStockPurchaseCost += $product->stockIns->sum(function ($stockIn) {
-                return $stockIn->purchase_price * $stockIn->qty; // purchase price of available stock
-            });
+            // $totalAvailableStockAfterSellValue += $product->stockIns->sum(function ($stockIn) {
+            //     return $stockIn->sell_price * $stockIn->qty; // purchase price of available stock
+            // });
+            // $totalAvailableStockPurchaseCost += $totalReturnPurchaseValue;
+
+            
         }
+        $totalAvailableStockAfterSellValue += ($totalStockInSellValue-$totalSellValue)+$totalReturnSellValue;
         // end product
 
 
@@ -319,7 +352,7 @@ class ReportController extends Controller
             'totalInvoiceSales',
             'totalInvoiceReturnSell',
             'totalInvoiceDue',
-            'totalInvoiceSell',
+            'totalInvoiceSoldPurchasePrice',
 
             // supplier
             'suppliers',
