@@ -21,7 +21,7 @@ class StockInController extends Controller
     {
         $this->middleware('auth');
         $this->middleware('permission:view stock-in')->only('index','show');
-        $this->middleware('permission:create stock-in')->only('create', 'store');
+        $this->middleware('permission:create stock-in')->only('create', 'store','addStockQty');
         $this->middleware('permission:update stock-in')->only('updateStock', 'addStockModify');
         $this->middleware('permission:delete stock-in')->only('destroy','deleteStock');
     }
@@ -232,6 +232,30 @@ class StockInController extends Controller
         ]);
 
         return response()->json(['message' => 'Stock entry added successfully', 'new_stock' => $newStock]);
+    }
+    public function addStockQty(Request $request)
+    {
+        // Step 1: Validate incoming data
+        $request->validate([
+            'product_id' => 'required|exists:products,id',
+            'qty' => 'required|numeric|min:1',
+        ]);
+
+        // Step 2: Find the product
+        $product = Product::find($request->product_id);
+
+        // Step 3: Check if StockIn exists for the product
+        $stockIn = StockIn::where('product_id', $product->id)
+        ->orderBy('id', 'desc') // Order by ID in descending order
+        ->first();
+        if ($stockIn) {
+            // Step 4: If StockIn exists, update its qty
+            $stockIn->qty += $request->qty;
+            $stockIn->save();
+        } 
+
+        // Step 7: Return a success response
+        return response()->json(['message' => 'Stock quantity added successfully.']);
     }
 
 

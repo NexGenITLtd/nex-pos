@@ -48,6 +48,71 @@ $stores = App\Models\Store::get();
             <div class="col-md-12">
                 @can('show dashboard')
                 <div class="card">
+                    <div class="card-body">
+                    <div class="row">
+                        <div class="col-12 col-sm-6 col-md-3">
+                            <div class="info-box">
+                            <span class="info-box-icon bg-info elevation-1"><i class="fas fa-sms"></i></span>
+
+                            <div class="info-box-content">
+                                <span class="info-box-text">Total SMS</span>
+                                <span class="info-box-number">
+                                {{ $smsSetting->rate != 0 ? $smsSetting->balance / $smsSetting->rate : 0 }}
+                                
+                                </span>
+                            </div>
+                            <!-- /.info-box-content -->
+                            </div>
+                            <!-- /.info-box -->
+                        </div>
+                        <!-- /.col -->
+                        <div class="col-12 col-sm-6 col-md-3">
+                            <div class="info-box mb-3">
+                            <span class="info-box-icon bg-danger elevation-1"><i class="fas fa-file-alt"></i></span>
+
+                            <div class="info-box-content">
+                                <span class="info-box-text">Total Send</span>
+                                <span class="info-box-number">{{ $smsSetting->sms_count }}</span>
+                            </div>
+                            <!-- /.info-box-content -->
+                            </div>
+                            <!-- /.info-box -->
+                        </div>
+                        <!-- /.col -->
+
+                        <!-- fix for small devices only -->
+                        <div class="clearfix hidden-md-up"></div>
+
+                        <div class="col-12 col-sm-6 col-md-3">
+                            <div class="info-box mb-3">
+                            <span class="info-box-icon bg-success elevation-1"><i class="fas fa-truck"></i></span>
+
+                            <div class="info-box-content">
+                                <span class="info-box-text">Total Supplier</span>
+                                <span class="info-box-number">{{ $totalSupplier }}</span>
+                            </div>
+                            <!-- /.info-box-content -->
+                            </div>
+                            <!-- /.info-box -->
+                        </div>
+                        <!-- /.col -->
+                        <div class="col-12 col-sm-6 col-md-3">
+                            <div class="info-box mb-3">
+                            <span class="info-box-icon bg-warning elevation-1"><i class="fas fa-users"></i></span>
+
+                            <div class="info-box-content">
+                                <span class="info-box-text">Total Customer</span>
+                                <span class="info-box-number">{{ $totalCustomers }}</span>
+                            </div>
+                            <!-- /.info-box-content -->
+                            </div>
+                            <!-- /.info-box -->
+                        </div>
+                        <!-- /.col -->
+                        </div>
+                    </div>
+                </div>
+                <div class="card">
                     <div class="card-header ">
                         <h5 class="card-title mb-0">{{ $cardHeader }}</h5>
                         <!-- Settings Icon -->
@@ -209,6 +274,7 @@ $stores = App\Models\Store::get();
                             </div>
                         </div>
                         <div class="row">
+                            @if(!empty($$paymentsWithDetails))
                             <!-- Payment Details -->
                             <div class="col-12 col-sm-6 col-md-6">
                                 <div class="info-box">
@@ -241,6 +307,7 @@ $stores = App\Models\Store::get();
                                     </div>
                                 </div>
                             </div>
+                            @endif
 
                             <!-- Bank Current Balance -->
                             <div class="col-12 col-sm-6 col-md-6">

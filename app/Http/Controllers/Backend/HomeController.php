@@ -16,6 +16,9 @@ use App\Models\SellProduct;
 use App\Models\ReturnSellProduct;
 use App\Models\SupplierPayment;
 use App\Models\BankAccount;
+use App\Models\Customer;
+use App\Models\Supplier;
+use App\Models\SmsSetting;
 use Carbon\Carbon;
 use PDF;
 class HomeController extends Controller
@@ -176,6 +179,10 @@ class HomeController extends Controller
         // Calculate cash in hand: $total_sales - ($total_due + $total_supplier_payment + $total_expense + $total_salary);
         $cash_in_hand = $total_sales - ($total_due + $total_supplier_payment + $total_expense + $total_salary);
 
+        $totalCustomers = Customer::count();
+        $totalSupplier = Supplier::count();
+        $smsSetting = SmsSetting::where('id', Auth::user()->store_id)->first();
+
         return view('home', compact(
             'total_invoices',
             'total_sales',
@@ -190,7 +197,11 @@ class HomeController extends Controller
             'cardHeader', // Add the card header to the view
             'store_id', // to retain the store filter in the view
             'paymentsWithDetails',
-            'bankAccounts'
+            'bankAccounts',
+
+            'totalCustomers',
+            'smsSetting',
+            'totalSupplier'
         ));
     }
 

@@ -40,8 +40,8 @@
             <h3 class="card-title">Stock Information</h3>
             <div class="card-tools">
               
-              <a href="{{route('product-stock-ins.direct')}}" class="btn btn-sm btn-warning ml-2">Direct Stock In</a>
-              <a href="{{route('stockins.create')}}" class="btn btn-sm btn-success">Add New</a>
+              <a href="{{route('product-stock-ins.direct')}}" class="btn btn-sm btn-warning ml-2">Stock-In</a>
+              <a href="{{route('stockins.create')}}" class="btn btn-sm btn-success">Bulk Stock-In</a>
             </div>
           </div>
           <!-- /.card-header -->
@@ -50,23 +50,108 @@
               <table id="example2" class="table table-sm table-bordered table-striped">
                 <thead>
                 <tr>
-                  <th>#</th>
+                  <!-- <th>#</th> -->
                   <th>ID</th>
                   <th>invoice_no</th>
                   <th>store</th>
-                  <th>stock_in_date</th>
+                  <!-- <th>stock-in date</th> -->
+                  <th class="text-center p-0">
+                    <table id="stock-table" class="table table-sm table-bordered bg-light mb-0">
+                      <thead>
+                        <tr>
+                          <td colspan="8">Stock Details</td>
+                        </tr>
+                        <tr>
+                            <!-- <th>#</th> -->
+                            <!-- <th>Product Code</th> -->
+                            <th>Product (Code)</th>
+                            <th>Supplier</th>
+                            <!-- <th>Rack</th> -->
+                            <th>Qty</th>
+                            <th>Purchase Price</th>
+                            <th>Sell Price</th>
+                            <th>Total Price</th>
+                            <!-- <th>Expiration Date</th> -->
+                            <!-- <th>Alert Date</th> -->
+                        </tr>
+                      </thead>
+                      </table>
+                  </th>
                   <th>Action</th>
                 </tr>
                 </thead>
                 <tbody>
                 @foreach($batchs as $key => $batch)
                 <tr>
-                  <td>{{ $loop->iteration }}</td>
+                  <!-- <td>{{ $loop->iteration }}</td> -->
                   <td><a href="{{route('stockins.show',$batch->id)}}" class="text-bold">{{$batch->id}}</a></td>
                   <td><a href="{{route('stockins.show',$batch->id)}}" class="text-bold">{{$batch->invoice_no}}</a></td>
                   <td>{{$batch->store->name}}</td>
-                  <td>{{$batch->stock_date}}</td>
+                  <!-- <td>{{$batch->stock_date}}</td> -->
                   <td>
+                  <div class="table-responsive">
+                    <table id="stock-table" class="table table-sm table-bordered bg-light mb-0 p-0">
+                        <thead>
+                        <tr>
+                            <!-- <th>#</th> -->
+                            <!-- <th>Product Code</th> -->
+                            <th>Product (Code)</th>
+                            <th>Supplier</th>
+                            <!-- <th>Rack</th> -->
+                            <th>Qty</th>
+                            <th>Purchase Price</th>
+                            <th>Sell Price</th>
+                            <th>Total Price</th>
+                            <!-- <th>Expiration Date</th> -->
+                            <!-- <th>Alert Date</th> -->
+                        </tr>
+                        </thead>
+                        <tbody>
+                        @php
+                            $total_qty = 0;
+                            $total_price = 0;
+                        @endphp
+                        @foreach($batch->stock_ins as $key => $stock_in)
+                            @php
+                                $total_qty += $stock_in->qty;
+                                $total_price += $stock_in->purchase_price * $stock_in->qty;
+                            @endphp
+                            <tr data-stock-in-id="{{ $stock_in->id }}">
+                                <!-- <td>{{ $key+1 }}</td> -->
+                                
+                                <!-- <td class="editable product-code-edit" data-field="product_id" data-selected="{{ $stock_in->product_id }}">
+                                    {{ $stock_in->product_id }}
+                                </td> -->
+                                <td class="product-name">{{ $stock_in->product->name }} ({{ $stock_in->product_id }})</td>
+                                <td class="editable supplier-edit" data-field="supplier_id" data-selected="{{ $stock_in->supplier_id }}">
+                                    {{ $stock_in->supplier->name }}
+                                </td>
+                                <!-- <td class="editable rack-edit" data-field="rack_id" data-selected="{{ $stock_in->rack_id }}">
+                                    {{ ($stock_in->rack)?$stock_in->rack->name:'' }}
+                                </td> -->
+                                <td class="editable" data-field="qty">{{ $stock_in->qty }}</td>
+                                <td class="editable" data-field="purchase_price">{{ $stock_in->purchase_price }}</td>
+                                <td class="editable" data-field="sell_price">{{ $stock_in->sell_price }}</td>
+                                <td>{{ $stock_in->purchase_price * $stock_in->qty }}</td>
+                                <!-- <td class="editable" data-field="expiration_date">{{ $stock_in->expiration_date }}</td> -->
+                                <!-- <td class="editable" data-field="alert_date">{{ $stock_in->alert_date }}</td> -->
+                            </tr>
+                        @endforeach
+                        </tbody>
+                        <tfoot>
+                        <tr>
+                            <th colspan="3">Total</th>
+                            <th>{{ $total_qty }}</th>
+                            <th></th>
+                            <th colspan="4">{{ $total_price }}</th>
+                        </tr>
+                        </tfoot>
+                    </table>
+                  </div>
+                  </td>
+                   
+                  <td>
+                    <a href="{{route('stockins.show',$batch->id)}}" class="btn btn-primary btn-sm">View/Edit</a>
                     <form action="{{ route('stockins.destroy', $batch->id) }}" method="POST" style="display: inline;">
                           @csrf
                           @method('DELETE')
@@ -110,13 +195,18 @@
   $(function () {
     $("#example1").DataTable();
     $('#example2').DataTable({
-      "paging": true,
-      "lengthChange": true,
-      "searching": true,
-      "ordering": true,
-      "info": true,
-      "autoWidth": false,
-    });
+    "paging": true,
+    "lengthChange": true,
+    "searching": true,
+    "ordering": true,
+    "columnDefs": [
+        // Disable ordering for the fourth column (index 3)
+        { 'orderable': false, targets: [3] }
+    ],
+    "info": true,
+    "autoWidth": false
+});
+
   });
 </script>
 @endsection

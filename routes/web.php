@@ -132,6 +132,9 @@ Route::group(['middleware' => ['auth', 'role:super-admin|admin|station|staff']],
     Route::get('product-direct-stock-ins', [DirectAddProductStockInSellController::class, 'create'])->name('product-direct-stock-ins');
     Route::post('product-direct-stock-ins', [DirectAddProductStockInSellController::class, 'storeDirect'])->name('product-stock-ins.direct');
 
+    // add stock qty
+    Route::post('/add-stock-qty', [StockInController::class, 'addStockQty'])->name('add.stock.qty');
+
     // Stock Operations
     Route::post('/update-stock', [StockInController::class, 'updateStock'])->name('stockins.updateStock');
     Route::post('/delete-stock', [StockInController::class, 'deleteStock'])->name('stockins.deleteStock');

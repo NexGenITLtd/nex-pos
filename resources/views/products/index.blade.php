@@ -55,8 +55,10 @@
                 <button type="submit" class="btn btn-sm btn-primary ml-2">Filter</button>
                 <a href="#" onclick="printDiv('app')" class="btn btn-sm btn-secondary ml-2">Print</a>
                 @can('create product')
-                <a href="{{route('products.create')}}" class="btn btn-sm btn-success ml-2">Add New</a>
-                <a href="{{route('product-stock-ins.direct')}}" class="btn btn-sm btn-warning ml-2">Add Stock In</a>
+                <a href="{{route('products.create')}}" class="btn btn-sm btn-success ml-2">Add Product Name</a>
+                
+                <a href="{{route('product-stock-ins.direct')}}" class="btn btn-sm btn-primary ml-2">Stock In</a>
+                <a href="{{route('stockins.create')}}" class="btn btn-sm btn-success ml-2">Bulk Stock-In</a>
                 @endcan
             </form>
             
@@ -78,11 +80,15 @@
                         <th>Total Stock</th>
                         <th>Total Sales</th>
                         <th>Available Qty</th>
-                        <th class="no-print">Status</th>
                         <th class="no-print">Action</th>
                     </tr>
                 </thead>
                 <tbody>
+                  @php
+                  $totalAvailableQty = 0;
+                  $totalStockQty = 0;
+                  $totalSaleQty = 0;
+                  @endphp
                   @foreach($products as $key => $product)
                   <tr>
                     <td>{{ $loop->iteration }}</td>
@@ -111,9 +117,15 @@
                           @if($storeId)
                               {{-- If store_id is set, calculate stock for that store --}}
                               {{ $product->stockIns->where('store_id', $storeId)->sum('qty') }}
+                              @php
+                              $totalStockQty += $product->stockIns->where('store_id', $storeId)->sum('qty');
+                              @endphp
                           @else
                               {{-- If no store_id, calculate total stock across all stores --}}
                               {{ $product->stockIns->sum('qty') }}
+                              @php
+                              $totalStockQty += $product->stockIns->sum('qty');
+                              @endphp
                           @endif
                       </td>
 
@@ -122,9 +134,15 @@
                           @if($storeId)
                               {{-- If store_id is set, calculate sales for that store --}}
                               {{ $product->sellProducts->where('store_id', $storeId)->sum('qty') }}
+                              @php
+                              $totalSaleQty += $product->sellProducts->where('store_id', $storeId)->sum('qty');
+                              @endphp
                           @else
                               {{-- If no store_id, calculate total sales across all stores --}}
                               {{ $product->sellProducts->sum('qty') }}
+                              @php
+                              $totalSaleQty += $product->sellProducts->sum('qty');
+                              @endphp
                           @endif
                       </td>
 
@@ -145,24 +163,22 @@
                                   : $product->returnSellProducts->sum('qty');
                               
                               $availableQty = ($stock+$sales_return)- $sales;
+                              $totalAvailableQty += $availableQty;
+                              
                           @endphp
                           {{ $availableQty }}
                       </td>
+                      
                       <td class="no-print">
                         <button class="btn {{ $product->status === 'active' ? 'btn-success' : 'btn-warning' }}  toggle-status btn-sm" 
                                 data-product-id="{{ $product->id }}" 
                                 data-status="{{ $product->status }}">
-                            {{ $product->status === 'active' ? 'Set Inactive' : 'Set Active' }}
+                            {{ $product->status === 'active' ? 'Sell Off' : 'Sell On' }}
                         </button>
-                        
-                      
+
                         <span class="d-none status-badge badge {{ $product->status === 'active' ? 'badge-success' : 'badge-danger' }}">
                             {{ ucfirst($product->status) }}
                         </span>
-                        
-                        
-                    </td>
-                      <td class="no-print">
                         
                         <a href="{{ route('products.edit', $product->id) }}" class="btn btn-primary btn-sm">Edit</a>
                         
@@ -176,22 +192,40 @@
                           <a href="{{ route('barcode', ['id' => $product->id, 'type' => 'multi-line']) }}?qty={{ $availableQty }}" 
                            class="btn btn-info btn-sm" 
                            title="multi line">
-                            Multi Line Barcode
+                            Multi Barcode
                         </a>
 
                         <a href="{{ route('barcode', ['id' => $product->id, 'type' => 'one-line']) }}?qty={{ $availableQty }}" 
                            class="btn btn-success btn-sm" 
                            title="one line">
-                            One Line Barcode
+                            One Barcode
                         </a>
+                        <!-- Add Quantity Button -->
+                        <button class="btn btn-primary btn-sm addQtyBtn" data-toggle="modal" data-target="#addQtyModal" 
+                            data-product-id="{{ $product->id }}" data-product-name="{{ $product->name }}">Add quantity</button>
                         </span>
                       </td>
                   </tr>
               @endforeach
+              <tr>
+                  <td>Total Qty</td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <td>{{ $totalStockQty }}</td>
+                  <td>{{ $totalSaleQty }}</td>
+                  <td>{{ $totalAvailableQty }}</td>
+                  <td></td>
+                      </tr>
               </tbody>
+              <tfoot>
+                
+              </tfoot>
 
             </table>
-
+            
             </div>
             <span class="float-right">{{ $products->links() }}</span>
           </div>
@@ -206,6 +240,38 @@
   <!-- /.container-fluid -->
 </section>
 <!-- /.content -->
+<!-- Add Quantity Modal -->
+<div class="modal fade" id="addQtyModal" tabindex="-1" role="dialog" aria-labelledby="addQtyModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="addQtyModalLabel">Add Quantity</h5>
+                <!-- Close Button -->
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <!-- Form to Add Quantity -->
+                <form id="addQtyForm">
+                    @csrf
+                    <input type="hidden" id="product_id" name="product_id">
+                    <div class="form-group">
+                        <label for="product_name" class="form-label">Product Name</label>
+                        <input type="text" id="product_name" class="form-control" disabled>
+                    </div>
+                    <div class="form-group">
+                        <label for="qty" class="form-label">Quantity</label>
+                        <input type="number" id="qty" name="qty" class="form-control" min="1" required>
+                    </div>
+                    <button type="submit" class="btn btn-success">Add</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+
 @endsection
 @section('script')
 
@@ -242,6 +308,42 @@
 <!-- AdminLTE for demo purposes -->
 <script src="{{asset('backend/')}}/dist/js/demo.js"></script>
 <!-- page script -->
+<script>
+    $(document).ready(function () {
+        // Open modal when 'Add Quantity' button is clicked
+        $('.addQtyBtn').on('click', function () {
+            const productId = $(this).data('product-id');
+            const productName = $(this).data('product-name');
+
+            $('#product_id').val(productId);
+            $('#product_name').val(productName);
+            $('#addQtyModal').modal('show');
+        });
+
+        // Handle form submission
+        $('#addQtyForm').on('submit', function (e) {
+            e.preventDefault();
+
+            const formData = $(this).serialize();
+
+            $.ajax({
+                url: "{{ route('add.stock.qty') }}", // Replace with your route
+                method: "POST",
+                data: formData,
+                success: function (response) {
+                  toastr.success(response.message);
+                    // alert(response.message);
+                    $('#addQtyModal').modal('hide');
+                    location.reload(); // Reload the page to reflect changes
+                },
+                error: function (xhr) {
+                  toastr.error('Error: ' + xhr.responseJSON.message);
+                    // alert('Error: ' + xhr.responseJSON.message);
+                }
+            });
+        });
+    });
+</script>
 
 <script>
   $(function () {
@@ -328,7 +430,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 if (data.success) {
                     // Update the button's data-status and text
                     this.dataset.status = newStatus;
-                    this.textContent = newStatus === 'active' ? 'Set Inactive' : 'Set Active';
+                    this.textContent = newStatus === 'active' ? 'Sell Off' : 'Sell On';
 
                     // Change the button color based on status
                     if (newStatus === 'active') {
