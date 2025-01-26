@@ -75,6 +75,7 @@
                       <option value="80mm">80mm</option>
                       <option value="58mm">58mm</option>
                       <option value="A4">A4</option>
+                      <option value="A4Challan">A4Challan</option>
                   </select>
               </div>
               <div class="col-md-4 form-group">

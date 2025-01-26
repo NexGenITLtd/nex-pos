@@ -53,11 +53,13 @@
                   <th>ID</th>
                   <th>name</th>
                   <th>phone</th>
+                  <th>email</th>
+                  <th>address</th>
                   <th>status</th>
                   <th>discount</th>
-                  <th>email</th>
-                  
-                  <th>address</th>
+                  <th>total purchase</th>
+                  <th>total paid</th>
+                  <th>total due</th>
                   <th>image</th>
                   <th class="no-print">action</th>
                 </tr>
@@ -68,10 +70,14 @@
                   <td>{{$customer->id}}</td>
                   <td>{{$customer->name}}</td>
                   <td>{{$customer->phone}}</td>
-                  <td>{{$customer->membership}}</td>
-                  <td>{{$customer->discount}}</td>
                   <td>{{$customer->email}}</td>
                   <td>{{$customer->address}}</td>
+                  <td>{{ ($customer->membership)?$customer->membership:'General' }}</td>
+                  <td>{{$customer->discount}}</td>
+                  <td>{{$customer->invoices->sum('total_bill')}}</td>
+                  <td>{{$customer->invoices->sum('paid_amount')}}</td>
+                  <td>{{$customer->invoices->sum('due_amount')}}</td>
+                  
                   <td>
                     @if($customer->img && file_exists(public_path('images/customers/' . $customer->img)))
                       <img src="{{ asset('images/customers/' . $customer->img) }}" height="60" width="60">
@@ -87,9 +93,8 @@
                           Delete
                       </button>
                   </form>
-
-
-                  </span></td>
+                  </span>
+                </td>
                 </tr>
                 @endforeach
                 </tbody>

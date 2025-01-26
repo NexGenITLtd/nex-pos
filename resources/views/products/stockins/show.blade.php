@@ -89,8 +89,8 @@
                       <th>Purchase Price</th>
                       <th>Sell Price</th>
                       <th>Total Price</th>
-                      <th>Expiration Date</th>
-                      <th>Alert Date</th>
+                      <!-- <th>Expiration Date</th> -->
+                      <!-- <th>Alert Date</th> -->
                       <th class="no-print">Action</th>
                   </tr>
                   </thead>
@@ -121,8 +121,8 @@
                           <td class="editable" data-field="purchase_price">{{ $stock_in->purchase_price }}</td>
                           <td class="editable" data-field="sell_price">{{ $stock_in->sell_price }}</td>
                           <td>{{ $stock_in->purchase_price * $stock_in->qty }}</td>
-                          <td class="editable" data-field="expiration_date">{{ $stock_in->expiration_date }}</td>
-                          <td class="editable" data-field="alert_date">{{ $stock_in->alert_date }}</td>
+                          <!-- <td class="editable" data-field="expiration_date">{{ $stock_in->expiration_date }}</td> -->
+                          <!-- <td class="editable" data-field="alert_date">{{ $stock_in->alert_date }}</td> -->
                           <td class="no-print"><button class="edit-btn btn btn-primary btn-sm no-print">Edit</button><button class="delete-btn btn btn-warning btn-sm no-print">Delete</button></td>
                       </tr>
                   @endforeach
@@ -295,8 +295,8 @@
                 <td class="editable" data-field="purchase_price"><input type="number" step="0.1" class="form-control" name="purchase_price"></td>
                 <td class="editable" data-field="sell_price"><input type="number" step="0.1" class="form-control" name="sell_price"></td>
                 <td>--</td>
-                <td class="editable" data-field="expiration_date"><input type="date" class="form-control" name="expiration_date"></td>
-                <td class="editable" data-field="alert_date"><input type="date" class="form-control" name="alert_date"></td>
+                <!-- <td class="editable" data-field="expiration_date"><input type="date" class="form-control" name="expiration_date"></td> -->
+                <!-- <td class="editable" data-field="alert_date"><input type="date" class="form-control" name="alert_date"></td> -->
                 <td>
                     <button class="save-new-row-btn btn btn-success btn-sm">Save</button>
                     <button class="cancel-new-row-btn btn btn-danger btn-sm">Cancel</button>
@@ -316,8 +316,8 @@
             qty: $row.find('input[name="qty"]').val(),
             purchase_price: $row.find('input[name="purchase_price"]').val(),
             sell_price: $row.find('input[name="sell_price"]').val(),
-            expiration_date: $row.find('input[name="expiration_date"]').val(),
-            alert_date: $row.find('input[name="alert_date"]').val(),
+            // expiration_date: $row.find('input[name="expiration_date"]').val(),
+            // alert_date: $row.find('input[name="alert_date"]').val(),
             _token: csrfToken
         };
 

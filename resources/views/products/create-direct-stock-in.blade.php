@@ -37,8 +37,8 @@
         <div class="card-header">
           <h3 class="card-title">Add Product Stock</h3>
           <div class="card-tools">
-            <button @click="addNewRow" class="btn btn-primary">New Row</button>
-            <a href="{{ route('products.index') }}" class="btn btn-success"><i class="fa fa-angle-double-left"></i> Back</a>
+            <button @click="addNewRow" class="btn btn-primary btn-sm">New Row</button>
+            <a href="{{ route('products.index') }}" class="btn btn-success btn-sm"><i class="fa fa-angle-double-left"></i> Back</a>
           </div>
         </div>
         <div class="card-body">
@@ -47,7 +47,10 @@
               <div class="col-md-12 col-lg-12 mb-4" v-for="(row, index) in rows" :key="index">
                 <div class="card">
                   <div class="card-header">
-                    <h5>Product Entry @{{ index + 1 }}</h5>
+                    <h5 class="card-title ">Product Entry @{{ index + 1 }}</h5>
+                    <div class="card-tools">
+                    <button class="btn btn-danger btn-sm" @click="cancelNewRow(index)"><i class="fa fa-times"></i></button>
+                    </div>
                   </div>
                   <div class="card-body">
                     <div class="row">
@@ -205,12 +208,7 @@
                     </div>
                   </div>
                   <div class="card-footer text-right">
-                    <button class="btn btn-success btn-sm" @click="saveNewRow(index)">
-                      Save
-                    </button>
-                    <button class="btn btn-danger btn-sm" @click="cancelNewRow(index)">
-                      Cancel
-                    </button>
+                    <button class="btn btn-success btn-lg" @click="saveNewRow(index)">Save</button>
                   </div>
                 </div>
               </div>

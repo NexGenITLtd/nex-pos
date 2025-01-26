@@ -27,8 +27,8 @@ class DirectStockInRequest extends FormRequest
             'qty' => 'required|numeric|min:0.1',  // Allow float values
             'purchase_price' => 'required|numeric|min:0',
             'sell_price' => 'required|numeric|min:0|gte:purchase_price',  // Updated to 'gte' for greater than or equal to
-            'expiration_date' => 'nullable|date|after:today',
-            'alert_date' => 'nullable|date|before:expiration_date',
+            // 'expiration_date' => 'nullable|date|after:today',
+            // 'alert_date' => 'nullable|date|before:expiration_date',
         ];
     }
 
@@ -84,12 +84,12 @@ class DirectStockInRequest extends FormRequest
             'sell_price.gte' => 'Selling price must be greater than or equal to the purchase price.',  // Updated message for 'gte' rule
 
             // expiration_date
-            'expiration_date.date' => 'Expiration date must be a valid date.',
-            'expiration_date.after' => 'Expiration date must be a date after today.',
+            // 'expiration_date.date' => 'Expiration date must be a valid date.',
+            // 'expiration_date.after' => 'Expiration date must be a date after today.',
 
             // alert_date
-            'alert_date.date' => 'Alert date must be a valid date.',
-            'alert_date.before' => 'Alert date must be before the expiration date.',
+            // 'alert_date.date' => 'Alert date must be a valid date.',
+            // 'alert_date.before' => 'Alert date must be before the expiration date.',
         ];
     }
 

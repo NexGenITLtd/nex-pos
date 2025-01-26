@@ -121,7 +121,7 @@
                         <div class="row mb-4">
                             <div class="col-sm-6 text-left">
                                 <h6>Shop Info:</h6>
-                                <p>{{ $invoice->store->address }}<br><i class="fa fa-phone"></i> {{ $invoice->store->phone }}<br><i class="fa fa-envelope"></i> {{ $invoice->store->email }}</p>
+                                <p>{!! $invoice->store->address !!}<br><i class="fa fa-phone"></i> {{ $invoice->store->phone }}<br><i class="fa fa-envelope"></i> {{ $invoice->store->email }}</p>
                                 
                             </div>
                             <div class="col-sm-6 text-end">

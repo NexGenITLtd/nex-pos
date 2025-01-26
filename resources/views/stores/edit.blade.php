@@ -77,6 +77,8 @@
                       <option value="80mm" {{ $store->printer_paper_size == '80mm' ? 'selected' : '' }}>80mm</option>
                       <option value="58mm" {{ $store->printer_paper_size == '58mm' ? 'selected' : '' }}>58mm</option>
                       <option value="A4" {{ $store->printer_paper_size == 'A4' ? 'selected' : '' }}>A4</option>
+                      <option value="A4Challan" {{ $store->printer_paper_size == 'A4Challan' ? 'selected' : '' }}>A4Challan</option>
+                      
                   </select>
               </div>
               <div class="col-md-4 form-group">

@@ -114,7 +114,7 @@ $stores = App\Models\Store::get();
                 </div>
                 <div class="card">
                     <div class="card-header ">
-                        <h5 class="card-title mb-0">{{ $cardHeader }}</h5>
+                        <h5 class="card-title mb-0"><i class="fas fa-file"></i> {{ $cardHeader }}</h5>
                         <!-- Settings Icon -->
                         <span  title="Filter" id="settingsIcon" class=" btn-tool float-right ml-2 " style="font-size: 1.2rem; transition: transform 0.3s;">
                             <i class="fas fa-cog"></i>
@@ -157,11 +157,8 @@ $stores = App\Models\Store::get();
                                 <a href="{{ route('report.pdf', request()->all()) }}" class="btn btn-success btn-sm ml-2">Download PDF</a>
                             </form>
                         </div>
-                        
                     </div>
-
-                
-
+                    <div class="card-body">
                         <div class="row">
                             <!-- Total Invoices -->
                             <div class="col-12 col-sm-6 col-md-3">
@@ -308,45 +305,38 @@ $stores = App\Models\Store::get();
                                 </div>
                             </div>
                             @endif
-
-                            <!-- Bank Current Balance -->
-                            <div class="col-12 col-sm-6 col-md-6">
-                                <div class="info-box">
-                                    <div class="card w-100 p-0 m-0">
-                                        <div class="card-header">
-                                            <h3 class="card-title"><i class="fas fa-university"></i> Cash & Bank Current Balance</h3>
-                                        </div>
-                                        <!-- /.card-header -->
-                                        <div class="card-body p-0 mb-0">
-                                            <table class="table table-bordered table-striped mb-0">
-                                                <thead>
-                                                    <tr>
-                                                        <th>Bank Name</th>
-                                                        <th>Account No</th>
-                                                        <th>Current Balance</th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody>
-                                                    @foreach ($bankAccounts as $bankAccount)
-                                                        <tr>
-                                                            <td>{{ $bankAccount->bank_name }}</td>
-                                                            <td>{{ $bankAccount->account_no }}</td>
-                                                            <td style="color: {{ $bankAccount->current_balance > 10000 ? 'red' : 'green' }};">
-                                                                {{ number_format($bankAccount->current_balance, 2) }}
-                                                            </td>
-                                                        </tr>
-                                                    @endforeach
-                                                </tbody>
-                                            </table>
-                                        </div>
-                                        <!-- /.card-body -->
-                                    </div>
-                                </div>
-                            </div>
-
                         </div>
                     </div>
-
+                    
+                </div>
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title"><i class="fas fa-university"></i> Cash & Bank Current Balance</h3>
+                    </div>
+                    <!-- /.card-header -->
+                    <div class="card-body">
+                        <table class="table table-bordered table-striped mb-0">
+                            <thead>
+                                <tr>
+                                    <th>Bank Name</th>
+                                    <th>Account No</th>
+                                    <th>Current Balance</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach ($bankAccounts as $bankAccount)
+                                    <tr>
+                                        <td>{{ $bankAccount->bank_name }}</td>
+                                        <td>{{ $bankAccount->account_no }}</td>
+                                        <td style="color: {{ $bankAccount->current_balance > 10000 ? 'red' : 'green' }};">
+                                            {{ number_format($bankAccount->current_balance, 2) }}
+                                        </td>
+                                    </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
+                    </div>
+                    <!-- /.card-body -->
                 </div>
                 @endcan
             </div>

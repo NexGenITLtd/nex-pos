@@ -52,7 +52,7 @@
                 <tr>
                   <!-- <th>#</th> -->
                   <th>ID</th>
-                  <th>invoice_no</th>
+                  <th width="8%">invoice_no</th>
                   <th>store</th>
                   <!-- <th>stock-in date</th> -->
                   <th class="text-center p-0">

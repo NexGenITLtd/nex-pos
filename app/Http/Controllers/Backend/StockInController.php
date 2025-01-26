@@ -213,8 +213,8 @@ class StockInController extends Controller
             'qty' => 'required|numeric',
             'purchase_price' => 'required|numeric',
             'sell_price' => 'required|numeric',
-            'expiration_date' => 'nullable|date',
-            'alert_date' => 'nullable|date',
+            // 'expiration_date' => 'nullable|date',
+            // 'alert_date' => 'nullable|date',
             'rack_id' => 'nullable|exists:racks,id',
         ]);
         $batch = Batch::find($validatedData['batch_id']);
@@ -226,8 +226,8 @@ class StockInController extends Controller
             'qty' => $validatedData['qty'],
             'purchase_price' => $validatedData['purchase_price'],
             'sell_price' => $validatedData['sell_price'],
-            'expiration_date' => $validatedData['expiration_date'],
-            'alert_date' => $validatedData['alert_date'],
+            // 'expiration_date' => $validatedData['expiration_date'],
+            // 'alert_date' => $validatedData['alert_date'],
             'rack_id' => $validatedData['rack_id']
         ]);
 

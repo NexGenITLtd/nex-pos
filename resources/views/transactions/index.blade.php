@@ -126,7 +126,7 @@
     
 </section>
 <!-- /.content -->
-
+@endsection
 @section('script')
 <!-- jQuery -->
 <script src="{{ asset('backend/') }}/plugins/jquery/jquery.min.js"></script>
@@ -135,4 +135,4 @@
 <!-- AdminLTE -->
 <script src="{{ asset('backend/') }}/dist/js/adminlte.js"></script>
 @endsection
-@endsection
+

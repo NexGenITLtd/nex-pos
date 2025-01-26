@@ -786,8 +786,10 @@ class InvoiceController extends Controller
 	public function downloadInvoicePDF($id)
 	{
 		$invoice = Invoice::with(['store', 'customer', 'sellProducts', 'returnSellProducts', 'payments'])->findOrFail($id);
-		// return view('invoices.pdf.single_invoice', compact('invoice'));
-		$pdf = PDF::loadView('invoices.pdf.single_invoice', compact('invoice'));
+		$printer_paper_size = $invoice->store->printer_paper_size;
+		// return view("invoices.pdf.$printer_paper_size", compact('invoice'));
+		
+		$pdf = PDF::loadView("invoices.pdf.$printer_paper_size", compact('invoice'));
 		return $pdf->download('invoice_' . $invoice->id . '.pdf');
 	}
 	

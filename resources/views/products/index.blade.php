@@ -170,62 +170,66 @@
                       </td>
                       
                       <td class="no-print">
-                        <button class="btn {{ $product->status === 'active' ? 'btn-success' : 'btn-warning' }}  toggle-status btn-sm" 
-                                data-product-id="{{ $product->id }}" 
-                                data-status="{{ $product->status }}">
-                            {{ $product->status === 'active' ? 'Sell Off' : 'Sell On' }}
-                        </button>
+                        <div class="btn-group">
+                          <button type="button" class="btn btn-secondary btn-sm dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+                              Actions
+                          </button>
+                          <div class="dropdown-menu p-2">
+                          <button class="btn btn-block mb-2 {{ $product->status === 'active' ? 'btn-success' : 'btn-warning' }}  toggle-status btn-sm" 
+                                  data-product-id="{{ $product->id }}" 
+                                  data-status="{{ $product->status }}">
+                              {{ $product->status === 'active' ? 'Sell Off' : 'Sell On' }}
+                          </button>
 
-                        <span class="d-none status-badge badge {{ $product->status === 'active' ? 'badge-success' : 'badge-danger' }}">
-                            {{ ucfirst($product->status) }}
-                        </span>
-                        
-                        <a href="{{ route('products.edit', $product->id) }}" class="btn btn-primary btn-sm">Edit</a>
-                        
-                          <form action="{{ route('products.destroy', $product->id) }}" method="POST" style="display: inline;">
-                              @csrf
-                              @method('DELETE')
-                              <button type="submit" class="btn btn-danger btn-sm">Delete</button>
-                          </form>
-                        
-                        <span class="">
-                          <a href="{{ route('barcode', ['id' => $product->id, 'type' => 'multi-line']) }}?qty={{ $availableQty }}" 
-                           class="btn btn-info btn-sm" 
-                           title="multi line">
-                            Multi Barcode
-                        </a>
+                          <span class="d-none status-badge badge {{ $product->status === 'active' ? 'badge-success' : 'badge-danger' }}">
+                              {{ ucfirst($product->status) }}
+                          </span>
+                          
+                          <a href="{{ route('products.edit', $product->id) }}" class="btn btn-block mb-2 btn-primary btn-sm">Edit</a>
+                          
+                            <form action="{{ route('products.destroy', $product->id) }}" method="POST" style="display: inline;">
+                                @csrf
+                                @method('DELETE')
+                                <button type="submit" class="btn btn-block mb-2 btn-danger btn-sm btn-delete">Delete</button>
+                            </form>
+                          
+                          <span class="">
+                            <a href="{{ route('barcode', ['id' => $product->id, 'type' => 'multi-line']) }}?qty={{ $availableQty }}" 
+                              class="btn btn-block mb-2 btn-info btn-sm" 
+                              title="multi line">
+                              Multi Barcode
+                          </a>
 
-                        <a href="{{ route('barcode', ['id' => $product->id, 'type' => 'one-line']) }}?qty={{ $availableQty }}" 
-                           class="btn btn-success btn-sm" 
-                           title="one line">
-                            One Barcode
-                        </a>
+                          <a href="{{ route('barcode', ['id' => $product->id, 'type' => 'one-line']) }}?qty={{ $availableQty }}" 
+                              class="btn btn-block mb-2 btn-success btn-sm" 
+                              title="one line">
+                              One Barcode
+                          </a>
+                          
+                          </span>
+                          </div>
+                        </div>
                         <!-- Add Quantity Button -->
                         <button class="btn btn-primary btn-sm addQtyBtn" data-toggle="modal" data-target="#addQtyModal" 
-                            data-product-id="{{ $product->id }}" data-product-name="{{ $product->name }}">Add quantity</button>
-                        </span>
+                              data-product-id="{{ $product->id }}" data-product-name="{{ $product->name }}">
+                              Add Quantity
+                          </button>
                       </td>
+
+
                   </tr>
               @endforeach
-              <tr>
-                  <td>Total Qty</td>
-                  <td></td>
-                  <td></td>
-                  <td></td>
-                  <td></td>
-                  <td></td>
-                  <td>{{ $totalStockQty }}</td>
-                  <td>{{ $totalSaleQty }}</td>
-                  <td>{{ $totalAvailableQty }}</td>
-                  <td></td>
-                      </tr>
               </tbody>
               <tfoot>
-                
+                <tr>
+                  <th colspan="6" class="text-right">Total Qty</th>
+                  <th>{{ $totalStockQty }}</th>
+                  <th>{{ $totalSaleQty }}</th>
+                  <th>{{ $totalAvailableQty }}</th>
+                  <th></th>
+                </tr>
               </tfoot>
-
             </table>
-            
             </div>
             <span class="float-right">{{ $products->links() }}</span>
           </div>
