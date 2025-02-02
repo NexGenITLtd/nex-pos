@@ -29,35 +29,6 @@ class Transaction extends Model
         return $this->belongsTo(User::class, 'created_by');
     }
 
-
-    // public static function createTransaction($store_id, $bank_account_id, $debit = 0, $credit = 0, $user_id, $note = null)
-    // {
-    //     // Fetch the bank account
-    //     $bankAccount = BankAccount::find($bank_account_id);
-
-    //     if (!$bankAccount) {
-    //         throw new \Exception("Bank account with ID {$bank_account_id} not found.");
-    //     }
-
-    //     // Calculate the new balance
-    //     $newBalance = $bankAccount->current_balance - $debit + $credit;
-
-    //     // Create the transaction
-    //     $transaction = self::create([
-    //         'store_id' => $store_id,
-    //         'bank_account_id' => $bank_account_id,
-    //         'debit' => $debit,
-    //         'credit' => $credit,
-    //         'balance' => $newBalance,
-    //         'created_by' => $user_id,
-    //         'note' => $note,
-    //     ]);
-
-    //     // Update the bank account's balance
-    //     $bankAccount->updateBalance($debit, $credit);
-
-    //     return $transaction;
-    // }
     public static function createTransaction($store_id, $bank_account_id, $user_id, $debit = 0, $credit = 0, $note = null)
     {
         // Fetch the bank account

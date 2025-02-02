@@ -61,9 +61,10 @@ class ExpenseController extends Controller
             Transaction::createTransaction(
                 $request->store_id,
                 $request->bank_account_id,
+                Auth::user()->id,
                 $request->amount, // Debit the expense amount
                 0, // No credit
-                Auth::user()->id,
+                
                 "Expense: {$expense->expense_type}, Amount: {$request->amount}"
             );
 
@@ -134,9 +135,10 @@ class ExpenseController extends Controller
             Transaction::createTransaction(
                 $request->store_id,
                 $request->bank_account_id,
+                Auth::user()->id,
                 $balanceDifference < 0 ? abs($balanceDifference) : 0, // Debit if decreasing
                 $balanceDifference > 0 ? abs($balanceDifference) : 0, // Credit if increasing
-                Auth::user()->id,
+                
                 "Expense Updated: {$expense->expense_type}, Adjusted Amount: {$balanceDifference}"
             );
         }
@@ -162,9 +164,10 @@ class ExpenseController extends Controller
         Transaction::createTransaction(
             $expense->store_id,
             $expense->bank_account_id,
+            Auth::user()->id,
             0, // No debit as we are refunding the amount
             $expense->amount, // Credit the bank account with the refunded amount
-            Auth::user()->id,
+            
             "Expense Deleted: {$expense->expense_type}, Refunded Amount: {$expense->amount}"
         );
 

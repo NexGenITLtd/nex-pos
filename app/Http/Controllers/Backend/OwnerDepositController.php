@@ -138,9 +138,9 @@ class OwnerDepositController extends Controller
         Transaction::createTransaction(
             $request->store_id, // Store ID
             $request->bank_account_id, // Bank Account ID
+            Auth::user()->id, // Logged-in user ID
             $debit, // Debit amount for withdrawal
             $credit, // Credit amount for deposit
-            Auth::user()->id, // Logged-in user ID
             "Owner Transaction - Type: {$request->transaction_type}, Amount: {$request->amount}, Note: {$request->note}"
         );
 
@@ -193,9 +193,9 @@ class OwnerDepositController extends Controller
         Transaction::createTransaction(
             $ownerDeposit->store_id,
             $oldBankAccountId,
+            Auth::user()->id,
             -$reverseDebit, // Reverse debit
             -$reverseCredit, // Reverse credit
-            Auth::user()->id,
             "Reversed Owner Transaction - Type: {$oldTransactionType}, Amount: {$oldAmount}, Note: {$ownerDeposit->note}"
         );
 
@@ -206,9 +206,9 @@ class OwnerDepositController extends Controller
         Transaction::createTransaction(
             $ownerDeposit->store_id,
             $ownerDeposit->bank_account_id,
+            Auth::user()->id,
             $debit, // New debit for deposit
             $credit, // New credit for withdrawal
-            Auth::user()->id,
             "Updated Owner Transaction - Type: {$ownerDeposit->transaction_type}, Amount: {$ownerDeposit->amount}, Note: {$ownerDeposit->note}"
         );
     }
@@ -242,9 +242,9 @@ class OwnerDepositController extends Controller
         Transaction::createTransaction(
             $store_id,
             $bank_account_id,
+            Auth::user()->id,
             $debit,
             $credit,
-            Auth::user()->id,
             "Reversed Owner Transaction - Type: {$transaction_type}, Amount: {$amount}"
         );
 

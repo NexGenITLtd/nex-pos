@@ -21,7 +21,7 @@ class StockInController extends Controller
     {
         $this->middleware('auth');
         $this->middleware('permission:view stock-in')->only('index','show');
-        $this->middleware('permission:create stock-in')->only('create', 'store','addStockQty');
+        $this->middleware('permission:create stock-in')->only('create', 'store','addStockQty','updatePrices');
         $this->middleware('permission:update stock-in')->only('updateStock', 'addStockModify');
         $this->middleware('permission:delete stock-in')->only('destroy','deleteStock');
     }
@@ -237,26 +237,69 @@ class StockInController extends Controller
     {
         // Step 1: Validate incoming data
         $request->validate([
+            'store_id' => 'required|exists:stores,id',
             'product_id' => 'required|exists:products,id',
-            'qty' => 'required|numeric|min:1',
+            'qty' => 'required|numeric',
         ]);
 
         // Step 2: Find the product
         $product = Product::find($request->product_id);
 
-        // Step 3: Check if StockIn exists for the product
+        // Step 3: Check if StockIn exists for the product in the requested store
         $stockIn = StockIn::where('product_id', $product->id)
-        ->orderBy('id', 'desc') // Order by ID in descending order
-        ->first();
-        if ($stockIn) {
-            // Step 4: If StockIn exists, update its qty
-            $stockIn->qty += $request->qty;
-            $stockIn->save();
-        } 
+            ->where('store_id', $request->store_id)
+            ->orderBy('id', 'desc') // Order by ID in descending order
+            ->first();
+
+        if (!$stockIn) {
+            // Step 4: Find the latest stock entry for this product from any store
+            $latestStock = StockIn::where('product_id', $product->id)
+                ->orderBy('id', 'desc')
+                ->first();
+
+            if ($latestStock) {
+                // Step 5: Create a new stock entry by copying existing data and updating store_id
+                $stockIn = $latestStock->replicate();
+                $stockIn->store_id = $request->store_id;
+                $stockIn->qty = 0; // Initialize with 0, since we're adding qty separately
+                $stockIn->save();
+            } else {
+                // If no previous stock exists, create a fresh entry
+                $stockIn = new StockIn();
+                $stockIn->product_id = $product->id;
+                $stockIn->store_id = $request->store_id;
+                $stockIn->qty = 0;
+                $stockIn->save();
+            }
+        }
+
+        // Step 6: Add the requested quantity
+        $stockIn->qty += $request->qty;
+        $stockIn->save();
 
         // Step 7: Return a success response
         return response()->json(['message' => 'Stock quantity added successfully.']);
     }
 
+    public function updatePrices(Request $request)
+    {
+        $request->validate([
+            'stock_in_id' => 'required|exists:stock_ins,id',
+            'purchase_price' => 'required|numeric|min:0',
+            'sell_price' => 'required|numeric|min:0|gt:purchase_price',
+        ], [
+            'sell_price.gt' => 'The selling price must be higher than the purchase price.',
+        ]);
+
+        // Find the StockIn record
+        $stockIn = StockIn::findOrFail($request->stock_in_id);
+
+        // Update purchase_price and sell_price
+        $stockIn->purchase_price = $request->purchase_price;
+        $stockIn->sell_price = $request->sell_price;
+        $stockIn->save();
+
+        return response()->json(['message' => 'Prices updated successfully.']);
+    }
 
 }

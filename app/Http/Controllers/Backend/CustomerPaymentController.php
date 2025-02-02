@@ -53,7 +53,7 @@ class CustomerPaymentController extends Controller
     {
         return view('customer_payments.create');
     }
-public function show($id)
+    public function show($id)
     {
         //
     }
@@ -183,10 +183,10 @@ public function show($id)
             if ($paid_amount > 0) {
                 Transaction::createTransaction(
                     $store_id,
-                    $invoice->bank_account_id, // Assuming the invoice has a reference to the bank account
+                    $customerPayment->bank_account_id, // Assuming the invoice has a reference to the bank account
+                    $user_id,
                     $paid_amount, // Debit the amount paid from the bank account
                     0, // No credit
-                    $user_id,
                     "Invoice Deleted: Invoice ID #$id"
                 );
             }
@@ -214,9 +214,9 @@ public function show($id)
 			Transaction::createTransaction(
 				$store_id,
 				$account_id,
+                auth()->id(),
 				0, // No debit for this transaction
 				$amount, // Credit the bank account
-				auth()->id(),
 				"Invoice payment for Invoice #$invoice_id"
 			);
         }
@@ -224,35 +224,35 @@ public function show($id)
 
 
     protected function updatePaymentById($paymentId, $amount, $cardType = null, $accountId, $cardNumber = null, $senderNo = null, $trxNo = null)
-{
-    // Find the existing customer payment by ID
-    $customerPayment = CustomerPayment::findOrFail($paymentId);
+    {
+        // Find the existing customer payment by ID
+        $customerPayment = CustomerPayment::findOrFail($paymentId);
 
-    // Store the previous amount of the payment
-    $previousAmount = $customerPayment->amount ?? 0;
-    $difference = $amount - $previousAmount;
+        // Store the previous amount of the payment
+        $previousAmount = $customerPayment->amount ?? 0;
+        $difference = $amount - $previousAmount;
 
-    // If the amount has changed, create a transaction
-    if ($difference != 0) {
-        Transaction::createTransaction(
-            $customerPayment->store_id, // Store ID from the customer payment
-            $accountId, // Bank account ID for the transaction
-            $difference < 0 ? abs($difference) : 0, // Debit for reductions
-            $difference > 0 ? $difference : 0, // Credit for additions
-            auth()->id(), // User ID who made the update
-            "Updated Payment: Invoice ID #$customerPayment->invoice_id" // Transaction description
-        );
+        // If the amount has changed, create a transaction
+        if ($difference != 0) {
+            Transaction::createTransaction(
+                $customerPayment->store_id, // Store ID from the customer payment
+                $accountId, // Bank account ID for the transaction
+                auth()->id(), // User ID who made the update
+                $difference < 0 ? abs($difference) : 0, // Debit for reductions
+                $difference > 0 ? $difference : 0, // Credit for additions
+                "Updated Payment: Invoice ID #$customerPayment->invoice_id" // Transaction description
+            );
+        }
+
+        // Update the payment details with the new values
+        $customerPayment->update([
+            'amount' => $amount,
+            'bank_account_id' => $accountId, // Updated account ID
+            'card_type' => $cardType, // Card type (nullable)
+            'payment_from_account_no' => $senderNo, // Sender account number (nullable)
+            'payment_trx_note' => $trxNo, // Transaction note (nullable)
+        ]);
     }
-
-    // Update the payment details with the new values
-    $customerPayment->update([
-        'amount' => $amount,
-        'bank_account_id' => $accountId, // Updated account ID
-        'card_type' => $cardType, // Card type (nullable)
-        'payment_from_account_no' => $senderNo, // Sender account number (nullable)
-        'payment_trx_note' => $trxNo, // Transaction note (nullable)
-    ]);
-}
 
 
 }

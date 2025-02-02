@@ -69,10 +69,10 @@ class EmployeeSalaryController extends Controller
         // Record the transaction (debit the bank account without changing the balance)
         Transaction::createTransaction(
             $emp->store_id, 
-            $request->bank_account_id, 
+            $request->bank_account_id,
+            Auth::user()->id, // Logged-in user
             $request->amount, // Debit the bank account
             0, // No credit (assuming no money is being credited here)
-            Auth::user()->id, // Logged-in user
             "Employee Salary Payment: Employee ID {$emp->id}, Amount: {$request->amount}, Pay for Month: {$request->pay_for_month}"
         );
 
@@ -137,9 +137,9 @@ class EmployeeSalaryController extends Controller
                 Transaction::createTransaction(
                     $emp->store_id,
                     $request->bank_account_id,
+                    Auth::user()->id, // Logged-in user
                     $balanceDifference > 0 ? abs($balanceDifference) : 0, // Debit if decreasing
                     $balanceDifference < 0 ? abs($balanceDifference) : 0, // Credit if increasing
-                    Auth::user()->id, // Logged-in user
                     "Employee Salary Updated: Employee ID {$emp->id}, Adjusted Amount: {$balanceDifference}, Pay for Month: {$request->pay_for_month}"
                 );
             }
@@ -179,9 +179,9 @@ class EmployeeSalaryController extends Controller
             Transaction::createTransaction(
                 $storeId,
                 $bankAccountId,
+                Auth::user()->id, // The current logged-in user
                 0, // No debit as it was already paid
                 $amount, // Credit the bank account to reverse the payment
-                Auth::user()->id, // The current logged-in user
                 "Deleted Salary Payment: Employee ID {$employeeId}, Reversed Amount: {$amount}"
             );
 

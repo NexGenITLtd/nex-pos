@@ -568,9 +568,9 @@ class InvoiceController extends Controller
 					Transaction::createTransaction(
 						$store_id,
 						$account_no_id,
+						$user_id,
 						$difference < 0 ? abs($difference) : 0, // Debit for reductions
 						$difference > 0 ? $difference : 0, // Credit for additions
-						$user_id,
 						"Updated Payment: Invoice ID #$invoice_id"
 					);
 				}
@@ -828,9 +828,9 @@ class InvoiceController extends Controller
 						Transaction::createTransaction(
 							$store_id,
 							$customerPayment->bank_account_id, // Assuming the invoice has a reference to the bank account
+							$user_id,
 							$customerPayment->amount, // Debit the amount paid from the bank account
 							0, // No credit
-							$user_id,
 							"Invoice Deleted: Invoice ID #$id"
 						);
 					}

@@ -46,24 +46,14 @@ class AccountController extends Controller
         $account->current_balance = $request->initial_balance ?? 0;  // Initialize current_balance
         $account->save();
 
-        // Record the transaction for creating the bank account
-        // Transaction::createTransaction(
-        //     $request->store_id,
-        //     $account->id,
-        //     0, // No debit for creating the bank account
-        //     $request->initial_balance ?? 0, // Credit the bank account with the initial balance
-        //     Auth::user()->id,
-        //     "Bank Account Created: #" . $request->account_no
-        // );
-
         // Record the initial transaction for the bank account
         Transaction::create([
             'store_id' => $request->store_id,
             'bank_account_id' => $account->id,
+            'created_by' => Auth::id(),
             'debit' => 0, // No debit
             'credit' => $request->initial_balance ?? 0, // Credit equals initial balance
             'balance' => $account->current_balance, // Match the bank account's current_balance
-            'created_by' => Auth::id(),
             'note' => "Initial balance added to bank account: #" . $request->account_no,
         ]);
 
@@ -114,9 +104,10 @@ class AccountController extends Controller
             Transaction::createTransaction(
                 $account->store_id,
                 $account->id,
+                Auth::user()->id,
                 $account->current_balance, // Debit the current balance on deletion
                 0, // No credit when deleting
-                Auth::user()->id,
+                
                 "Bank Account Deleted: #" . $account->account_no
             );
 

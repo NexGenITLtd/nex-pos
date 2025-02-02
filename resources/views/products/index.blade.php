@@ -53,9 +53,10 @@
                 </select>
                 
                 <button type="submit" class="btn btn-sm btn-primary ml-2">Filter</button>
+
                 <a href="#" onclick="printDiv('app')" class="btn btn-sm btn-secondary ml-2">Print</a>
                 @can('create product')
-                <a href="{{route('products.create')}}" class="btn btn-sm btn-success ml-2">Add Product Name</a>
+                <!-- <a href="{{route('products.create')}}" class="btn btn-sm btn-success ml-2">Add Product Name</a> -->
                 
                 <a href="{{route('product-stock-ins.direct')}}" class="btn btn-sm btn-primary ml-2">Stock In</a>
                 <a href="{{route('stockins.create')}}" class="btn btn-sm btn-success ml-2">Bulk Stock-In</a>
@@ -94,8 +95,23 @@
                     <td>{{ $loop->iteration }}</td>
                       <td>{{ $product->id }}</td>
                       <td>{{ $product->name }}</td>
-                      <td>@can('show profit'){{ $product->latestStockIn->purchase_price }}@endcan</td>
-                      <td>{{ $product->latestStockIn->sell_price }}</td>
+                      <td>
+                          @can('show profit')
+                              {{ $product->latestStockIn->purchase_price ?? 'N/A' }}
+                              <span class="editPriceBtn" 
+                                    data-bs-toggle="modal" 
+                                    data-bs-target="#editPriceModal"
+                                    data-product-id="{{ $product->id }}"
+                                    data-stock-in-id="{{ $product->latestStockIn->id }}"
+                                    data-store-id="{{ $product->latestStockIn->store_id }}"
+                                    data-product-name="{{ $product->name }}"
+                                    data-purchase-price="{{ $product->latestStockIn->purchase_price }}"
+                                    data-sell-price="{{ $product->latestStockIn->sell_price }}">
+                                    <i class="fas fa-edit"></i>
+                                </span>
+                          @endcan
+                      </td>
+                      <td>{{ $product->latestStockIn->sell_price ?? 'N/A' }}</td>
                       <td>
                         @php
                         $extra = 0;
@@ -211,7 +227,7 @@
                         </div>
                         <!-- Add Quantity Button -->
                         <button class="btn btn-primary btn-sm addQtyBtn" data-toggle="modal" data-target="#addQtyModal" 
-                              data-product-id="{{ $product->id }}" data-product-name="{{ $product->name }}">
+                              data-product-id="{{ $product->id }}" data-product-name-add-qty="{{ $product->name }}">
                               Add Quantity
                           </button>
                       </td>
@@ -244,6 +260,42 @@
   <!-- /.container-fluid -->
 </section>
 <!-- /.content -->
+
+<!-- Edit Prices Modal -->
+<div class="modal fade" id="editPriceModal" tabindex="-1" aria-labelledby="editPriceModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="editPriceModalLabel">Edit Prices for <span id="product_name"></span></h5>
+                <!-- Close Button -->
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <form id="editPriceForm">
+                @csrf
+                <input type="hidden" id="stock_in_id" name="stock_in_id">
+                <input type="hidden" id="store_id" name="store_id">
+
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="purchase_price" class="form-label">Purchase Price</label>
+                        <input type="number" class="form-control" id="purchase_price" name="purchase_price" required min="0">
+                    </div>
+                    <div class="mb-3">
+                        <label for="sell_price" class="form-label">Sell Price</label>
+                        <input type="number" class="form-control" id="sell_price" name="sell_price" required min="0">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary btn-lg" data-dismiss="modal" aria-label="Close">Cancel</button>
+                    <button type="submit" class="btn btn-primary btn-lg">Save Changes</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
 <!-- Add Quantity Modal -->
 <div class="modal fade" id="addQtyModal" tabindex="-1" role="dialog" aria-labelledby="addQtyModalLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">
@@ -261,14 +313,25 @@
                     @csrf
                     <input type="hidden" id="product_id" name="product_id">
                     <div class="form-group">
-                        <label for="product_name" class="form-label">Product Name</label>
-                        <input type="text" id="product_name" class="form-control" disabled>
+                        <label for="product_name_add_qty" class="form-label">Product Name</label>
+                        <input type="text" id="product_name_add_qty" class="form-control" disabled>
+                    </div>
+                    <div class="form-group">
+                        <label for="store_id" class="form-label">Store</label>
+                        <select name="store_id" id="store_id" class="form-control form-control-sm" style="width: 100%; display: inline-block;">
+                          
+                          @foreach($stores as $store)
+                              <option value="{{ $store->id }}">
+                                  {{ $store->name }}
+                              </option>
+                          @endforeach
+                      </select>
                     </div>
                     <div class="form-group">
                         <label for="qty" class="form-label">Quantity</label>
-                        <input type="number" id="qty" name="qty" class="form-control" min="1" required>
+                        <input type="number" id="qty" name="qty" class="form-control" required>
                     </div>
-                    <button type="submit" class="btn btn-success">Add</button>
+                    <button type="submit" class="btn btn-success btn-lg">Add</button>
                 </form>
             </div>
         </div>
@@ -313,14 +376,55 @@
 <script src="{{asset('backend/')}}/dist/js/demo.js"></script>
 <!-- page script -->
 <script>
+  $(document).ready(function () {
+    // Open modal when 'Edit Prices' button is clicked
+    $('.editPriceBtn').on('click', function () {
+        const stockInId = $(this).data('stock-in-id');  // Get stock_in_id from the button's data attribute
+        const productName = $(this).data('product-name');
+        const purchasePrice = $(this).data('purchase-price') || 0;  // Get the current purchase price
+        const sellPrice = $(this).data('sell-price') || 0;  // Get the current sell price
+
+        $('#stock_in_id').val(stockInId);  // Set stock_in_id in the modal form
+        $('#product_name').text(productName);  // Set product name in the modal
+        $('#purchase_price').val(purchasePrice);  // Set purchase price in the modal
+        $('#sell_price').val(sellPrice);  // Set sell price in the modal
+
+        $('#editPriceModal').modal('show');
+    });
+
+    // Handle form submission
+    $('#editPriceForm').on('submit', function (e) {
+        e.preventDefault();
+
+        const formData = $(this).serialize();
+
+        $.ajax({
+            url: "{{ route('products.updatePrices') }}", // Replace with your route
+            method: "POST",
+            data: formData,
+            success: function (response) {
+                toastr.success(response.message);  // Show success message
+                $('#editPriceModal').modal('hide');  // Close modal
+                location.reload();  // Reload the page to reflect changes
+            },
+            error: function (xhr) {
+                toastr.error('Error: ' + xhr.responseJSON.message);  // Show error message
+            }
+        });
+    });
+});
+
+</script>
+                        
+<script>
     $(document).ready(function () {
         // Open modal when 'Add Quantity' button is clicked
         $('.addQtyBtn').on('click', function () {
             const productId = $(this).data('product-id');
-            const productName = $(this).data('product-name');
+            const productName = $(this).data('product-name-add-qty');
 
             $('#product_id').val(productId);
-            $('#product_name').val(productName);
+            $('#product_name_add_qty').val(productName);
             $('#addQtyModal').modal('show');
         });
 
@@ -462,7 +566,5 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     });
 });
-
-
 </script>
 @endsection

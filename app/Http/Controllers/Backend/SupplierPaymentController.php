@@ -89,9 +89,9 @@ class SupplierPaymentController extends Controller
             Transaction::createTransaction(
                 $supplierPayment->store_id,
                 $supplierPayment->bank_account_id,
+                Auth::user()->id,
                 $supplierPayment->amount, // Debit the bank account
                 0, // No credit
-                Auth::user()->id,
                 "Supplier Payment: Supplier ID {$supplierPayment->supplier_id}, Amount: {$supplierPayment->amount}"
             );
 
@@ -144,9 +144,9 @@ class SupplierPaymentController extends Controller
             Transaction::createTransaction(
                 $supplierPayment->store_id,
                 $supplierPayment->bank_account_id,
+                Auth::user()->id,
                 0,
                 $supplierPayment->amount, // Credit the previous payment amount
-                Auth::user()->id,
                 "Reversed Supplier Payment: Supplier ID {$supplierPayment->supplier_id}, Amount: {$supplierPayment->amount}"
             );
 
@@ -157,9 +157,9 @@ class SupplierPaymentController extends Controller
             Transaction::createTransaction(
                 $request->store_id,
                 $request->bank_account_id,
+                Auth::user()->id,
                 $request->amount, // Debit the new payment amount
                 0,
-                Auth::user()->id,
                 "Updated Supplier Payment: Supplier ID {$request->supplier_id}, Amount: {$request->amount}"
             );
 
@@ -204,9 +204,9 @@ class SupplierPaymentController extends Controller
             Transaction::createTransaction(
                 $supplierPayment->store_id,
                 $supplierPayment->bank_account_id,
+                Auth::user()->id,
                 0, // No debit, as the amount is refunded
                 $supplierPayment->amount, // Credit the bank account
-                Auth::user()->id,
                 "Deleted Supplier Payment: Supplier ID {$supplierPayment->supplier_id}, Refunded Amount: {$supplierPayment->amount}"
             );
 

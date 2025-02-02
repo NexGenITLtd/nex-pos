@@ -134,6 +134,8 @@ Route::group(['middleware' => ['auth', 'role:super-admin|admin|station|staff']],
 
     // add stock qty
     Route::post('/add-stock-qty', [StockInController::class, 'addStockQty'])->name('add.stock.qty');
+    // update purchase and sell price
+    Route::post('/update-prices', [StockInController::class, 'updatePrices'])->name('products.updatePrices');
 
     // Stock Operations
     Route::post('/update-stock', [StockInController::class, 'updateStock'])->name('stockins.updateStock');
